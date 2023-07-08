@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "af1135d1-934e-4ac3-8289-2850d9617b2b",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 394,
+  "height": 170,
+  "platformSettings": {},
+  "subMetas": {
+    "JieSuan_ShiBaiLogo": {
+      "ver": "1.0.4",
+      "uuid": "ced5811a-2f13-4926-9980-6c1902764df0",
+      "rawTextureUuid": "af1135d1-934e-4ac3-8289-2850d9617b2b",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 8,
+      "trimY": 13,
+      "width": 378,
+      "height": 144,
+      "rawWidth": 394,
+      "rawHeight": 170,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

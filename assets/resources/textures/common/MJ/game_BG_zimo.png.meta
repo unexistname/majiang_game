@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "3d080953-b521-4644-b02e-6b4f604de1ee",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 69,
+  "height": 41,
+  "platformSettings": {},
+  "subMetas": {
+    "game_BG_zimo": {
+      "ver": "1.0.4",
+      "uuid": "480163cd-b86e-4c5e-b8d3-df034092d06d",
+      "rawTextureUuid": "3d080953-b521-4644-b02e-6b4f604de1ee",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0.5,
+      "trimX": 5,
+      "trimY": 1,
+      "width": 59,
+      "height": 38,
+      "rawWidth": 69,
+      "rawHeight": 41,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

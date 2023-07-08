@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "7697b67f-6aab-48a2-9051-7c4b438a4b1e",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 394,
+  "height": 170,
+  "platformSettings": {},
+  "subMetas": {
+    "JieSuan_ShengLiLogo": {
+      "ver": "1.0.4",
+      "uuid": "ae2717f8-b2ec-46f3-83a9-d97a1996b148",
+      "rawTextureUuid": "7697b67f-6aab-48a2-9051-7c4b438a4b1e",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": -1.5,
+      "trimX": 8,
+      "trimY": 16,
+      "width": 378,
+      "height": 141,
+      "rawWidth": 394,
+      "rawHeight": 170,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
