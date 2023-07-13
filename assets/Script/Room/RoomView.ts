@@ -2,10 +2,12 @@ import UIMgr from "../BaseUI/UIMgr";
 import { GameConst } from "../Const/GameConst";
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
+import ClockItem from "../Game/ClockItem";
 import AudioTool from "../Global/AudioTool";
 import MeModel from "../Global/MeModel";
 import EllipseLayout from "../Util/EllipseLayout";
 import GameUtil from "../Util/GameUtil";
+import CustomLayout from "./CustomLayout";
 import RoomMgr from "./RoomMgr";
 import RoomNet from "./RoomNet";
 
@@ -29,11 +31,9 @@ export default class RoomView extends cc.Component {
     @property({type: [cc.Node]})
     node_modes: cc.Node[] = [];
 
-    // @property(EllipseLayout)
-    node_gambers: EllipseLayout;
+    node_gambers: EllipseLayout | CustomLayout;
 
-    // @property(EllipseLayout)
-    node_allHolds: EllipseLayout;
+    node_allHolds: EllipseLayout | CustomLayout;
 
     @property(cc.Node)
     node_operate: cc.Node;
@@ -49,6 +49,9 @@ export default class RoomView extends cc.Component {
 
     @property(cc.Prefab)
     prefab_gamber: cc.Prefab;
+
+    @property(ClockItem)
+    item_clock: ClockItem;
 
     @property(cc.Node)
     node_watchers: cc.Node;
@@ -80,8 +83,7 @@ export default class RoomView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowDissolve, this.G_ShowDissolve);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
-        AudioTool.ins.playRoomBGM();
-        
+        AudioTool.ins.playRoomBGM();        
     }
 
     updateView(data) {
@@ -97,12 +99,19 @@ export default class RoomView extends cc.Component {
 
         let mode = this.getMode();
         let node_mode = this.node_modes[mode];
-        this.node_gambers = node_mode.getChildByName("node_gambers").getComponent(EllipseLayout);
-        this.node_allHolds = node_mode.getChildByName("node_allHolds").getComponent(EllipseLayout);
-        // this.node_gambers.setMode(0);
-        this.node_allHolds.setMode(mode);
+        if (mode == 0) {
+            this.node_gambers = node_mode.getChildByName("node_gambers").getComponent(EllipseLayout);
+            this.node_allHolds = node_mode.getChildByName("node_allHolds").getComponent(EllipseLayout);
+        } else {
+            this.node_gambers = node_mode.getChildByName("node_gambers").getComponent(CustomLayout);
+            this.node_allHolds = node_mode.getChildByName("node_allHolds").getComponent(EllipseLayout);
+            this.node_allHolds.setMode(1);
+        }
 
         GameUtil.clearChildren(this.node_gambers.node);
+        GameUtil.clearChildren(this.node_allHolds.node);
+        this.gambers = {};
+        
         for (let gamberId in data.gambers) {
             let gamber = data.gambers[gamberId];
             this.G_AddGamber(gamber);
@@ -118,22 +127,21 @@ export default class RoomView extends cc.Component {
 
     getMode() {
         switch (this.gameName) {
+            // case GameConst.GameType.SHI_SAN_SHUI:
             case GameConst.GameType.FU_DING_DA_ZHA:
+            case GameConst.GameType.PAO_DE_KUAI:
+                return 2;
             case GameConst.GameType.FU_DING:
             case GameConst.GameType.QUE_SHENG:
-            case GameConst.GameType.SHI_SAN_SHUI:
-            case GameConst.GameType.PAO_DE_KUAI:
                 return 1;
             default:
                 return 0;
         }
     }
 
-    G_SwapSeat(data) {
-        let index1 = RoomMgr.ins.getLocalSeatIndex(data.userId);
-        let index2 = RoomMgr.ins.getLocalSeatIndex(data.anotherUserId);
-        this.node_gambers.swapNode(index1, index2);
-        this.node_allHolds.swapNode(index1, index2);
+    G_SwapSeat() {
+        this.node_gambers.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
+        this.node_allHolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
     }
 
     initGameViewNode(node) {
@@ -187,6 +195,13 @@ export default class RoomView extends cc.Component {
         }
     }
 
+    getGamberPos(userId) {
+        let gamber = this.getGamberNode(userId);
+        if (gamber) {
+            return gamber.parent.convertToWorldSpaceAR(gamber.position);
+        }
+    }
+
     getGamber(userId: string) {
         return this.gambers[userId];
     }
@@ -225,10 +240,10 @@ export default class RoomView extends cc.Component {
 
     G_GameSettle() {
         this.node_operate.active = true;
-        GameUtil.clearChildren(this.node_allHolds.node);
-        for (let userId of RoomMgr.ins.getGamberIds()) {
-            this.addHoldItem(userId);
-        }
+        // GameUtil.clearChildren(this.node_allHolds.node);
+        // for (let userId of RoomMgr.ins.getGamberIds()) {
+        //     this.addHoldItem(userId);
+        // }
     }
 
     getComberItemByNode(node: cc.Node) {
@@ -380,10 +395,12 @@ export default class RoomView extends cc.Component {
         let x = gamber2.position.x - gamber.position.x;
         let y = gamber2.position.y - gamber.position.y;
         let pos = new cc.Vec2(x, y);   
+        let startPos = gamber.parent.convertToWorldSpaceAR(gamber.getPosition());
+        startPos = UIMgr.getRoot().convertToNodeSpaceAR(startPos);
 
         let prop = data.prop;
         let porpEndNode = null;
-        UIMgr.createSpriteNode(prop.begin, gamber, (err, propStartNode) => {
+        UIMgr.createSpriteNode(prop.begin, UIMgr.getRoot(), (err, propStartNode) => {
             if (prop.end) {
                 UIMgr.createSpriteNode(prop.end, gamber2, (err, node) => {
                     porpEndNode = node;
@@ -392,6 +409,7 @@ export default class RoomView extends cc.Component {
             propStartNode.scaleX = 0;
             propStartNode.scaleY = 0;
             propStartNode.rotation = 0;
+            propStartNode.setPosition(startPos);
             propStartNode.runAction(cc.sequence(
                 cc.spawn(cc.scaleTo(1,1),
                     cc.moveTo(1,pos),

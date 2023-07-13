@@ -61,6 +61,7 @@ export default class GamberInfoView extends cc.Component {
         this.txt_userName.string = data.userName;
         this.txt_winRate.string = data.winRate;
         this.node.active = true;
+        console.log("zzzzzzzzzzzzzz");
     }
 
     G_ShowProp(data) {

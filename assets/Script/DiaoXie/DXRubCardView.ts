@@ -34,8 +34,9 @@ export default class DXRubCardView extends cc.Component {
         this.node.active = false;
     }
 
-    updateView(pokerId) {
-        UIMgr.setPoker(this.sp_poker, pokerId);
+    updateView(holds) {
+        UIMgr.setPoker(this.node_back.getComponent(cc.Sprite), holds[0]);
+        UIMgr.setPoker(this.sp_poker, holds[1]);
     }
 
     onTouchDown(event) {
@@ -57,8 +58,7 @@ export default class DXRubCardView extends cc.Component {
 
     G_RubCard(data) {
         this.data = data;
-        let holds = data.holds;
-        this.updateView(holds[holds.length - 1]);
+        this.updateView(data.holds);
         this.node_back.setPosition(new cc.Vec2(0, 0));
         this.node.active = true;
     }

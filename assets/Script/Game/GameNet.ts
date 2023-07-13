@@ -28,4 +28,17 @@ export default class GameNet {
     static C_Waive() {
         NetMgr.tcpSend(NetDefine.WS_Req.C_Waive, {}, UrlModel.gameUrl);
     }
+
+    static CA_Perspect() {
+        NetMgr.tcpSend(NetDefine.WS_Req.CA_Perspect, {}, UrlModel.gameUrl);
+    }
+
+    static CA_ShowReplaceCard() {
+        NetMgr.tcpSend(NetDefine.WS_Req.CA_ShowReplaceCard, {}, UrlModel.gameUrl);
+    }
+
+    static CA_ReplaceCard(myCard: number, heapCard: number) {
+        let data = { myCard: myCard, heapCard: heapCard };
+        NetMgr.tcpSend(NetDefine.WS_Req.CA_ReplaceCard, data, UrlModel.gameUrl);
+    }
 }

@@ -32,7 +32,6 @@ export default class PokerDoOperateItem extends cc.Component {
     updateView(userId) {
         this.userId = userId;
         let opData = GameMgr.ins.getLastOperate(userId);
-        console.log("aaaaaaaaaaaaaaa", userId, opData);
         if (opData) {
             this.G_DoOperate(opData);
         }

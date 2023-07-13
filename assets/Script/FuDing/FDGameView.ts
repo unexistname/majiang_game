@@ -5,7 +5,6 @@ import GameUtil from "../Util/GameUtil";
 import RoomMgr from "../Room/RoomMgr";
 import UIMgr from "../BaseUI/UIMgr";
 import { GameConst } from "../Const/GameConst";
-import FDHoldsItem from "./FDHoldsItem";
 import MJFoldItem from "../Mahjong/MJFoldItem";
 
 const { ccclass, property } = cc._decorator;
@@ -52,6 +51,8 @@ export default class FDGameView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Hun, this.G_Hun);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeftCard, this.G_LeftCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_BaseHu, this.G_BaseHu);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.G_ShowCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
     }
 
     initView() {
@@ -85,6 +86,16 @@ export default class FDGameView extends cc.Component {
             this.node_allFolds.addChild(node, localIndex);
             node.getComponent(MJFoldItem).setUserId(userId);
         }
+    }
+
+    G_ShowCard() {
+        GameUtil.clearChildren(this.node_allFolds.node);
+    }
+
+    G_GameSettle() {
+        this.node_baseHu.active = false;
+        this.node_leftCard.active = false;
+        this.node_hun.active = false;
     }
 
 }

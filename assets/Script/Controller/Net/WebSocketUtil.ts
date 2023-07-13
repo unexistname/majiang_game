@@ -55,7 +55,6 @@ export default class WebSocketUtil extends cc.Component {
             if (this.state == NetState.UNCONNECT) {
                 return;
             }
-            console.log("aaaaaaaaaaaaaaa", this.state);
             if (this.isClose()) {
                 this.reconnect();
             }

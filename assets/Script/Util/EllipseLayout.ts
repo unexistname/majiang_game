@@ -26,9 +26,6 @@ export default class EllipseLayout extends cc.Component {
 
     setMode(mode) {
         this.mode = mode;
-        if (this.mode == 11) {
-            this.fixNodeCnt= 4;
-        }
         this._doLayoutDirty();
     }
 
@@ -49,34 +46,21 @@ export default class EllipseLayout extends cc.Component {
         }
     }
 
-    swapNode(localIndex: number, anotherLocalIndex: number) {
+    swapNode(localIndex: number, anotherLocalIndex: number, callback?: Function) {
+        const MOVE_TIME = 0.3;
         GameUtil.swap(this.seatNodes, localIndex, anotherLocalIndex);
         let pos1 = this.seatNodes[localIndex].position;
         let pos2 = this.seatNodes[anotherLocalIndex].position;
-        this.seatNodes[localIndex].runAction(cc.moveTo(0.3, pos2));
-        this.seatNodes[anotherLocalIndex].runAction(cc.moveTo(0.3, pos1));
+        this.seatNodes[localIndex].runAction(cc.moveTo(MOVE_TIME, pos2));
+        this.seatNodes[anotherLocalIndex].runAction(cc.moveTo(MOVE_TIME, pos1));
+        if (callback) {
+            setTimeout(callback, MOVE_TIME);
+        }
     }
 
     getChildren() {
         return this.node.children;
     }
-
-    // updateLayout() {
-    //     let len = RoomMgr.ins.getSeatNum();
-    //     if (len == 3) {
-    //         len = 4;
-    //     }
-    //     for (let localIndex in this.seatNodes) {
-    //         let node = this.seatNodes[localIndex];
-    //         let angle = (360 / len * Number(localIndex)) - 90;
-    //         let pos = this.getEllipsePos(angle);
-    //         node.setPosition(pos);
-    //         if (Number(localIndex) != 0) {
-    //             node.scaleX = 0.8;
-    //             node.scaleY = 0.8;
-    //         }
-    //     }
-    // }
 
     getEllipsePos(angle: number) {
         let A = this.node.width / 2;
@@ -92,10 +76,10 @@ export default class EllipseLayout extends cc.Component {
 
     _layoutDirty: boolean = true;
     
-    _doLayout(children) {
-        var activeChildCount = 0;
-        for (var i = 0; i < children.length; ++i) {
-            var child = children[i];
+    _doLayout(children, showAnim = false) {
+        let activeChildCount = 0;
+        for (let i = 0; i < children.length; ++i) {
+            let child = children[i];
             if (child.activeInHierarchy) {
                 activeChildCount++;
             }
@@ -112,20 +96,39 @@ export default class EllipseLayout extends cc.Component {
             activeChildCount = this.fixNodeCnt;
         }
 
-        for (var i = 0; i < children.length; ++i) {
-            var child = children[i];
+        for (let i = 0; i < children.length; ++i) {
+            let child = children[i];
             if (child && child.activeInHierarchy) {
                 let localIndex = this.findLocalIndex(child, i);
                 let angle = (360 / activeChildCount * localIndex) - 90;
                 let pos = this.getEllipsePos(angle);
-                child.setPosition(pos);
+                if (showAnim) {
+                    child.runAction(cc.moveTo(0.3, pos));
+                } else {
+                    child.setPosition(pos);
+                }
                 this.dealMode(localIndex, child);
             }
         }
     }
 
+    updateSeatIndex(oldSeatIndex, newSeatIndex) {
+        let tmpSeatNodes = {};
+        for (let localIndex in this.seatNodes) {
+            for (let userId in oldSeatIndex) {
+                if (oldSeatIndex[userId] == localIndex) {
+                    let newLocalIndex = newSeatIndex[userId];
+                    tmpSeatNodes[newLocalIndex] = this.seatNodes[localIndex];
+                    break;
+                }
+            }            
+        }
+        this.seatNodes = tmpSeatNodes;
+        this._doLayout(this.node.children, true);
+    }
+
     dealMode(localIndex, child) {
-        if (this.mode == 0 || this.mode == 10) {
+        if (this.mode == 0) {
             if (localIndex != 0) {
                 child.scaleX = 0.8;
                 child.scaleY = 0.8;
@@ -137,10 +140,6 @@ export default class EllipseLayout extends cc.Component {
             } else {
                 child.scaleX = 0.8;
                 child.scaleY = 0.8;
-            }
-        } else if (this.mode == 11) {
-            if (localIndex) {
-                child.active = false;
             }
         }
     }

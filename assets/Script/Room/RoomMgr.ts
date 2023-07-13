@@ -20,6 +20,8 @@ export default class RoomMgr {
 
     seatIndex: {} = {};
 
+    oldSeatIndex: {} = {};
+
     gambers: {} = {};
 
     maxGamberNum: number;
@@ -43,13 +45,12 @@ export default class RoomMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
     }
 
-    generateGamberOrder(gambers) {
-        this.gambers = gambers;
-        let myIndex = this.findMySeatIndex(gambers);
-        this.maxGamberSeatIndex = this.findMaxGamberSeatIndex(gambers);
+    generateGamberOrder() {
+        let myIndex = this.findMySeatIndex(this.gambers);
+        this.maxGamberSeatIndex = this.findMaxGamberSeatIndex(this.gambers);
         
-        for (let userId in gambers) {
-            let gamber = gambers[userId];
+        for (let userId in this.gambers) {
+            let gamber = this.gambers[userId];
             // if (myIndex >= 0) {
                 let mod = this.getSeatNum();
                 let localIndex = (gamber.seatIndex - myIndex + mod) % mod;
@@ -81,9 +82,18 @@ export default class RoomMgr {
     }
 
     G_SwapSeat(data) {
+        this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
         this.gambers[data.userId].seatIndex = data.userSeatIndex;
         this.gambers[data.anotherUserId].seatIndex = data.anotherSeatIndex;
-        GameUtil.swap(this.seatIndex, data.userId, data.anotherUserId);
+        this.generateGamberOrder();
+    }
+
+    getOldSeatIndex() {
+        return this.oldSeatIndex;
+    }
+
+    getSeatIndex() {
+        return this.seatIndex;
     }
 
     G_LeaveRoom(userId: string) {
@@ -157,7 +167,9 @@ export default class RoomMgr {
         this.round = data.round;
         this.gameName = data.gameName;
         this.roundAmount = data.roundAmount;
-        this.generateGamberOrder(data.gambers);
+        this.gambers = data.gambers;
+        this.maxGamberNum = data.gamberAmount;
+        this.generateGamberOrder();
     }
 
     goToGame() {

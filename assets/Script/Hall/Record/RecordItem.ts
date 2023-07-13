@@ -1,4 +1,5 @@
 import UIMgr from "../../BaseUI/UIMgr";
+import GameUtil from "../../Util/GameUtil";
 import RecordUserItem from "./RecordUserItem";
 
 const { ccclass, property } = cc._decorator;
@@ -31,7 +32,7 @@ export default class RecordItem extends cc.Component {
         this.txt_gameName.string = data.gameName;
         this.txt_roomId.string = data.roomId;
         this.txt_round.string = data.round;
-        this.txt_time.string = data.time;
+        this.txt_time.string = GameUtil.dateFormat("yyyy/MM/dd hh:mm:ss", data.time)
     }
 
     CC_onClickDetail() {

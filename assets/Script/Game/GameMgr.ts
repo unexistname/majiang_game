@@ -38,6 +38,8 @@ export default class GameMgr {
 
     drawCard: { [key: string]: any } = {};
 
+    friendCard: number;
+
     init() {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Hun, this.G_Hun);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_InitHolds, this.G_InitHolds);
@@ -50,6 +52,20 @@ export default class GameMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_FriendCard, this.G_FriendCard);
+        // NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
+    }
+
+    G_FriendCard(data) {
+        this.friendCard = data.card;
+    }
+
+    getFriendCard() {
+        return this.friendCard;
+    }
+
+    G_PushRoomInfo() {
+        this.holds = {};
     }
 
     G_GameState(data) {
@@ -144,6 +160,8 @@ export default class GameMgr {
     }
 
     G_GameSettle(data) {
+        this.holds = {};
+        this.drawCard = {};
         this.operates = {};
         UIMgr.showView("SettleView", data);
     }

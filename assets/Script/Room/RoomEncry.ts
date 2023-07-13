@@ -61,4 +61,12 @@ export default class RoomEncry extends BaseEncry {
     G_WatcherToGamber(msg: any) {
         msg.userName = this.decode(msg.userName);
     }
+
+    C_Chat(msg: any) {
+        msg.content = this.encode(msg.content);
+    }
+
+    G_Chat(msg: any) {
+        msg.content = this.decode(msg.content);
+    }
 }

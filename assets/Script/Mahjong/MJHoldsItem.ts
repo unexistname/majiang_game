@@ -10,7 +10,6 @@ import MJNet from "./MJNet";
 import GameUtil from "../Util/GameUtil";
 import CardEventHandle from "./CardEventHandle";
 import MeModel from "../Global/MeModel";
-import GlobalModel from "../Model/GlobalModel";
 import GameMgr from "../Game/GameMgr";
 
 
@@ -35,14 +34,12 @@ export default class MJHoldsItem extends CardEventHandle {
 
     setUserId(userId: string) {
         this.userId = userId;
-        let localIndex = RoomMgr.ins.getLocalSeatIndex(userId);
-        let seatAmount = RoomMgr.ins.getSeatNum();
-        let sitPos = MahjongUtil.getSitPosByLocalIndex(localIndex, seatAmount);
-        this.setSitPos(sitPos);
+        
         if (MeModel.isMe(userId)) {
-            this.register("click_card", this.Slot_ClickMahjong.bind(this));
+            this.item_holds.register("click_card", this.Slot_ClickMahjong.bind(this));
         }
 
+        this.updateSitPos();
         let holds = GameMgr.ins.getHoldsByUserId(this.userId);
         let drawCard = GameMgr.ins.getDrawCard(this.userId);
         if (holds) {
@@ -55,12 +52,20 @@ export default class MJHoldsItem extends CardEventHandle {
         }
     }
 
+    updateSitPos() {
+        let localIndex = RoomMgr.ins.getLocalSeatIndex(this.userId);
+        let seatAmount = RoomMgr.ins.getSeatNum();
+        let sitPos = MahjongUtil.getSitPosByLocalIndex(localIndex, seatAmount);
+        this.setSitPos(sitPos);
+    }
+
     setSitPos(sitPos: GameConst.SitPos) {
         this.sitPos = sitPos;
         this.item_holds.sitPos = sitPos;
     }
 
     protected start(): void {
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_InitHolds, this.G_InitHolds);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DrawCard, this.G_DrawCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
@@ -68,6 +73,8 @@ export default class MJHoldsItem extends CardEventHandle {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncHolds, this.G_SyncHolds);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.G_ShowCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.updateSitPos);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.updateSitPos);
     }
 
     cancelClickMahjong() {
@@ -86,7 +93,7 @@ export default class MJHoldsItem extends CardEventHandle {
         this.clickNode.setPosition(new cc.Vec2(pos.x, pos.y + this.clickNode.height / 2));
     }
 
-    Slot_ClickMahjong(mahjongId, node) {
+    Slot_ClickMahjong(mahjongId, node, component) {
         let clickTwice = this.clickNode == node;
         this.cancelClickMahjong();
 
@@ -138,10 +145,15 @@ export default class MJHoldsItem extends CardEventHandle {
         }
     }
 
+    G_PushRoomInfo() { 
+        this.hangang = null;
+        this.updateCombines([]);
+    }
+
     G_GameSettle() {
         this.item_holds.hideDrawMahjong();
         this.item_holds.updateHolds([]);
-        this.item_holds.updateCombines([]);
+        this.updateCombines([]);
         this.cancelClickMahjong();    
         this.hangang = null;
         this.item_holds.showType = GameConst.CardShowType.STAND;
@@ -196,9 +208,12 @@ export default class MJHoldsItem extends CardEventHandle {
         } else if (MahjongUtil.hasOperate(operate, MJOperate.PENG)) {
             this.playPeng(value);
         } else if (MahjongUtil.hasOperate(operate, MJOperate.HAN_GANG)) {
-            this.hangang = value;
+            this.hangang = value.pai;
             this.playGang(value);
         } else if (MahjongUtil.hasOperate(operate, MJOperate.GANG)) {
+            if (this.hangang != value.pai) {
+                this.playGang(value);
+            }
             this.hangang = null;
         } else if (MahjongUtil.hasOperate(operate, MJOperate.HU)) {
             this.playHu(value);

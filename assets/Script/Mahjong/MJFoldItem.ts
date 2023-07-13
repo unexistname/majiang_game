@@ -27,7 +27,6 @@ export default class MJFoldItem extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.clear);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Fold, this.G_Fold);
-        NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.clear);
         this.item_folds.showType = GameConst.CardShowType.SHOW;
     }
 
@@ -45,9 +44,6 @@ export default class MJFoldItem extends cc.Component {
     }
 
     G_DoOperate(data) {
-        if (this.chupai != null) {
-            console.log("有操作", this.folds, this.chupai);
-        }
         if (this.chupai != null && MahjongUtil.isMJBaseOperate(data.operate)) {
             GameUtil.reverseRemove(this.folds, this.chupai);
             this.item_folds.mahjongs = this.folds;
@@ -62,7 +58,7 @@ export default class MJFoldItem extends cc.Component {
                 this.chupai = pai;
                 console.log("当前的弃牌", this.folds, pai, this.item_folds.node.children);
             }
-        } else {
+        } else if (MahjongUtil.isMJBaseOperate(data.operate) || MahjongUtil.hasOperate(data.operate, MJOperate.CHU_PAI)) {
             this.item_folds.hiddenMark();
         }
     }
@@ -74,6 +70,7 @@ export default class MJFoldItem extends cc.Component {
     }
 
     clear() {
+        this.chupai = null;
         this.folds = [];
         this.item_folds.mahjongs = [];
     }

@@ -34,6 +34,31 @@ export default class UIMgr {
         });
     }
 
+    static showItemInRoot(itemName: string, data?: any, callback?: Function) {
+        let parent = this.rootNode;
+        let path = ResUtil.getPrefabPath(itemName);
+        cc.loader.loadRes(path, cc.Prefab, (err, prefab) => {
+            if (err) {
+                LogUtil.Error(err);
+                callback && callback(err, null);
+            } else {
+                let node = this.createNode(prefab, parent);
+                if (data) {
+                    node.getComponent(itemName).updateView(data);
+                }
+                callback && callback(err, node);
+            }
+        });
+    }
+
+    static closeView(viewName: string) {
+        let parent = cc.find("Canvas");
+        let viewNode = parent.getChildByName(viewName);
+        if (viewNode) {
+            viewNode.parent = null;
+        }
+    }
+
     static showTip(content: string) {
         this.showView("TipsView", content, null, false);
     }
@@ -220,7 +245,7 @@ export default class UIMgr {
         if (!CC_EDITOR) {
             sprite["lastUrl"] = path;
         }
-        cc.loader.loadRes(path, cc.SpriteFrame,function(err, spriteFrame){
+        cc.loader.loadRes(path, cc.SpriteFrame, function(err, spriteFrame){
             if (err) {
                 LogUtil.Error(err);
                 callback && callback(err, null);

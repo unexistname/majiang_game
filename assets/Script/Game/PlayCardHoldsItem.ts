@@ -12,6 +12,9 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
 
     clickNodes: cc.Node[] = [];
 
+    @property(cc.Label)
+    txt_leftCard: cc.Label;
+
     protected start(): void {
         super.start();
         // NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
@@ -34,7 +37,7 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
         node.setPosition(new cc.Vec2(pos.x, pos.y + offset));
     }
 
-    Slot_ClickPoker(pokerId, node) {
+    Slot_ClickPoker(pokerId, node, component) {
         let index = this.clickNodes.indexOf(node);
         if (index >= 0) {
             this.clickNodes.splice(index, 1);
@@ -61,6 +64,22 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
                 this.selectOrCancelSelect(node, false);
             }
             this.clickNodes = []
+        }
+    }
+
+    updateHolds(holds) {
+        if (MeModel.isMe(this.userId)) {
+            this.item_pokers.updateHolds(holds);
+            this.txt_leftCard.node.active = false;
+        } else {
+            if (holds.length > 0 && holds[0] == -1) {
+                this.txt_leftCard.string = holds.length + "";
+                this.txt_leftCard.node.active = true;
+                holds = [-1];
+            } else {
+                this.txt_leftCard.node.active = false;
+            }
+            this.item_pokers.updateHolds(holds);
         }
     }
 }

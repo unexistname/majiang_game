@@ -1,6 +1,8 @@
 import UIMgr from "../BaseUI/UIMgr";
 import { GameConst } from "../Const/GameConst";
+import MJGridLayout from "../Util/MJGridLayout";
 import MJStraightLayout from "../Util/MJStraightLayout";
+import MahjongItem from "./MahjongItem";
 import MahjongStraightItem from "./MahjongStraightItem";
 
 const { ccclass, menu, property, executeInEditMode } = cc._decorator;
@@ -15,6 +17,9 @@ export default class MahjongFoldItem extends cc.Component {
     @property({type: cc.Integer})
     mahjongNumOneLine: number = 10;
 
+    @property(cc.Node)
+    node_folds: cc.Node;
+
     @property({ type: [cc.Integer] })
     set mahjongs(val) {
         this.updateMahjongs(val);
@@ -24,7 +29,7 @@ export default class MahjongFoldItem extends cc.Component {
         return this._mahjongs;
     }
 
-    _showType: GameConst.CardShowType = GameConst.CardShowType.STAND;
+    _showType: GameConst.CardShowType = GameConst.CardShowType.SHOW;
 
     _sitPos: GameConst.SitPos = GameConst.SitPos.DOWN;
 
@@ -39,8 +44,8 @@ export default class MahjongFoldItem extends cc.Component {
         }
         this._sitPos = val;
 
-        this.node.getComponent(MJStraightLayout).sitPos = val;
-    };
+        this.node_folds.getComponent(MJGridLayout).sitPos = val;
+    }
     
     @property({ type:cc.Enum(GameConst.CardShowType) })
     set showType(val) {
@@ -49,13 +54,13 @@ export default class MahjongFoldItem extends cc.Component {
         }
         this._showType = val;
 
-        for (let mahjongStraight of this.node.children) {
-            let item = mahjongStraight.getComponent(MahjongStraightItem);
+        for (let mahjongStraight of this.node_folds.children) {
+            let item = mahjongStraight.getComponent(MahjongItem);
             if (item) {
                 item.showType = val;
             }
         }
-    };
+    }
 
     get showType() {
         return this._showType;
@@ -64,11 +69,8 @@ export default class MahjongFoldItem extends cc.Component {
     @property(cc.Node)
     sp_mark: cc.Node;
 
+    loading: {} = {};
     loadingNodes: {} = {};
-
-    protected onLoad(): void {
-        this.sp_mark.parent = null;
-    }
 
     updateLayout() {
         this.updateMahjongs(this.mahjongs);
@@ -81,57 +83,81 @@ export default class MahjongFoldItem extends cc.Component {
     hiddenMark() {
         this.sp_mark.active = false;
     }
-
+    
     updateMahjongs(mahjongs, callback?: Function) {
-        let mahjongStraights = this.node.children;
-
-        for (let i = 0; i < mahjongStraights.length; ++i) {
-            if (mahjongStraights[i]) {
-                mahjongStraights[i].active = false;
-            }
-        }
-        for (let i = 0, k = 0; k < mahjongs.length; ++i) {
-            let subMahjongs = [];
-            for (let j = 0; j < this.mahjongNumOneLine && k < mahjongs.length; ++j, ++k) {
-                subMahjongs.push(mahjongs[k]);
-            }
-            if (!mahjongStraights[i]) {
-                this._addMahjongStraight(i, subMahjongs, callback);
-            } else {
-                let item = mahjongStraights[i].getComponent(MahjongStraightItem);
-                item.updateMahjongs(subMahjongs, (j, node) => {
-                    this.updateMark(i, j, node, callback);
-                });
-            }
-        }
         this._mahjongs = mahjongs;
+        let mahjongItems = this.node_folds.children;
+        for (let i = 0; i < mahjongs.length; ++i) {
+            let mahjongId = mahjongs[i];
+            if (this.loading[i] || this.loadingNodes[i]) {
+                continue;
+            }
+            if (!mahjongItems[i]) {
+                this._addMahjongItem(i, mahjongId, callback);
+            } else {
+                mahjongItems[i].getComponent(MahjongItem).mahjongId = mahjongId;
+                mahjongItems[i].active = true;
+            }
+        }
+        for (let i = mahjongs.length; i < mahjongItems.length; ++i) {
+            mahjongItems[i].parent = null;
+        }
     }
 
-    _addMahjongStraight(index, mahjongs, callback?: Function) {
-        UIMgr.createPrefab("MahjongStraightItem", null, null, (err, node: cc.Node) => {
-            let item = node.getComponent(MahjongStraightItem);
-            item.showType = this.showType;
-            item.sitPos = this.sitPos;
-            node.anchorX = 0;
-            node.anchorY = 0;
+    _addMahjongItem(index, mahjongId, callback?: Function) {
+        let data = {mahjongId: mahjongId, showType: this.showType};
 
+        this.loading[index] = true;
+        UIMgr.createMahjongItem(this.sitPos, null, data, (err, node) => {
+            this.loading[index] = false;
             this.loadingNodes[index] = node;
-            for (let i = this.node.children.length; this.loadingNodes[i]; i = this.node.children.length) {
-                this.node.addChild(this.loadingNodes[i]);
+            for (let i = this.node_folds.children.length; this.loadingNodes[i]; i = this.node_folds.children.length) {
+                this.node_folds.addChild(this.loadingNodes[i]);
+                this.adjustSize();
+                if (this._mahjongs[i] == null) {
+                    this.loadingNodes[i].active = false;
+                } else {
+                    let item = this.loadingNodes[i].getComponent(MahjongItem);
+                    if (item.mahjongId != this._mahjongs[i]) {
+                        item.mahjongId = this._mahjongs[i];
+                    }
+                    this.loadingNodes[i].active = true;
+                }
                 this.loadingNodes[i] = null;
             }
-            item.updateMahjongs(mahjongs, (subIndex, node) => {
-                this.updateMark(index, subIndex, node, callback);
-            });
-        })
+            this.updateMark(index, node, callback);
+            callback && callback(index, node);
+        });
     }
 
-    updateMark(i, j, node, callback?: Function) {
-        let id = i * this.mahjongNumOneLine + j;
+    updateMark(id, node, callback?: Function) {
+        // let id = i * this.mahjongNumOneLine + j;
         if (id == this._mahjongs.length - 1) {
             this.sp_mark.parent = node;
             this.sp_mark.setPosition(new cc.Vec2(0, 50));
         }
         callback && callback(id, node);
+    }
+
+    adjustSize() {
+        // let width = 0, height = 0;
+        // switch (this.sitPos) {
+        //     case GameConst.SitPos.TOP:
+        //     case GameConst.SitPos.DOWN:
+        //         for (let child of this.node_folds.children) {
+        //             height += child.height;
+        //             width = Math.max(width, child.width);
+        //         }
+        //         break;
+        //     case GameConst.SitPos.LEFT:
+        //     case GameConst.SitPos.RIGHT:
+        //         for (let child of this.node_folds.children) {
+        //             width += child.width;
+        //             height = Math.max(height, child.height);
+        //         }
+        //         break;
+        // }
+        // this.node.width = this.node_folds.width;
+        // this.node.height = this.node_folds.height;
     }
 }

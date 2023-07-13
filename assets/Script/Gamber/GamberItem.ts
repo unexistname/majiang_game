@@ -62,7 +62,10 @@ export default class GamberItem extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GamberScoreChange, this.G_GamberScoreChange);
         // NetMgr.addListener(this, NetDefine.WS_Resp.G_GameOver, this.G_GameOver);
-        
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_QuickChat, this.G_Chat);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_Chat, this.G_Chat);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_Voice, this.G_Voice);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_Emoji, this.G_Emoji);
     }
 
     updateView(data: any) {
@@ -76,6 +79,33 @@ export default class GamberItem extends cc.Component {
         this.node_offline.active = data.offline;
         this.node_ready.active = this.getReadyState(data);
         UIMgr.setSprite(this.sp_avatar, data.avatarUrl);
+    }
+
+    G_Chat(data) {
+        if (data.userId == this.userId) {
+            data.pos = this.getGlobalPos();
+            UIMgr.showItemInRoot("GamberChatItem", data);
+        }
+    }
+
+    G_Voice(data) {
+        if (data.userId == this.userId) {
+            data.pos = this.getGlobalPos();
+            UIMgr.showItemInRoot("GamberVoiceItem", data);
+        }
+    }
+
+    G_Emoji(data) {
+        if (data.userId == this.userId) {
+            data.pos = this.getGlobalPos();
+            UIMgr.showItemInRoot("GamberEmojiItem", data);
+        }
+    }
+
+    getGlobalPos() {
+        return UIMgr.getRoot().convertToNodeSpaceAR(
+            this.node.parent.convertToWorldSpaceAR(
+                this.node.getPosition()));
     }
 
     G_BeginGame() {

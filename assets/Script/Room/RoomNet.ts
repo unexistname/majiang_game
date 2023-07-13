@@ -1,5 +1,6 @@
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
+import MeModel from "../Global/MeModel";
 import UrlModel from "../Global/UrlModel";
 
 export default class RoomNet {
@@ -45,4 +46,29 @@ export default class RoomNet {
         let data = { userId: userId, propId: propId };
         NetMgr.tcpSend(NetDefine.WS_Req.C_UseProp, data, UrlModel.gameUrl);
     }
+
+    static C_Voice(content: any, time: number, receiveUserId?: string) {
+        let data = {
+            content: content,
+            time: time,
+            receiveUserId: receiveUserId,
+        }
+        NetMgr.tcpSend(NetDefine.WS_Req.C_Voice, data, UrlModel.gameUrl);
+    }
+
+    static C_Chat(content: string) {
+        let data = { content: content };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_Chat, data, UrlModel.gameUrl);
+    }
+
+    static C_QuickChat(chatId: number) {
+        let data = { chatId: chatId };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_QuickChat, data, UrlModel.gameUrl);
+    }
+
+    static C_Emoji(emojiId: string) {
+        let data = { emojiId: emojiId };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_Emoji, data, UrlModel.gameUrl);
+    }
+
 }

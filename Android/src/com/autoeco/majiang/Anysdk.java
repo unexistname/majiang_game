@@ -8,7 +8,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -21,6 +24,7 @@ import org.cocos2dx.lib.Cocos2dxJavascriptJavaBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +38,9 @@ public class Anysdk implements LocationListener {
     private static String MCH_ID = "1638283123";
 
     private static Anysdk instance = null;
+    private static MediaRecorder mMediaRecorder = null;
+    private static MediaPlayer mPlayer = null;
+    private static String voiceDirPath = "";
 
     private static final String TAG = "麻将sdk";
 
@@ -183,4 +190,98 @@ public class Anysdk implements LocationListener {
 
         Log.i(TAG, "onProviderDisabled ");
     }
+
+    private static Handler handler = new Handler();
+    private static Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            //要做的事情
+            if (mMediaRecorder == null) return;
+            double ratio = (double) mMediaRecorder.getMaxAmplitude() / 100;
+            double db = 0;// 分贝
+            //默认的最大音量是100,可以修改，但其实默认的，在测试过程中就有不错的表现
+            //你可以传自定义的数字进去，但需要在一定的范围内，比如0-200，就需要在xml文件中配置maxVolume
+            //同时，也可以配置灵敏度sensibility
+            if (ratio > 1) {
+                db = 30 * Math.log10(ratio);
+            }
+
+            //获取音量大小
+
+            //只要有一个线程，不断调用这个方法，就可以使波形变化
+            //主要，这个方法必须在ui线程中调用
+            handler.postDelayed(this, 200);
+        }
+    };
+
+    public static void prepareRecord(String filename) {
+        if (mMediaRecorder == null) {
+            mMediaRecorder = new MediaRecorder();
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+            File file = new File(getFilePath(filename));
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            mMediaRecorder.setOutputFile(file.getAbsolutePath());
+            mMediaRecorder.setMaxDuration(1000 * 60 * 10);
+            try {
+                mMediaRecorder.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mMediaRecorder.start();
+        }
+
+        //每200毫秒获取声音大小
+        handler.postDelayed(runnable, 200);
+    }
+
+    public static void finishRecord() {
+        handler.removeCallbacks(runnable);
+        mMediaRecorder.stop();
+        mMediaRecorder.release();
+        mMediaRecorder = null;
+    }
+
+    public static void cancelRecord() {
+        finishRecord();
+    }
+
+    public static void playVoice(String filename) {
+        mPlayer = new MediaPlayer();
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                //播放完毕
+            }
+        });
+        try {
+            mPlayer.setDataSource(getFilePath(filename));
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.i(TAG, "playVoice: ");
+        }
+    }
+
+    public static void stopVoice() {
+        if (mPlayer != null) {
+            mPlayer.stop();
+        }
+    }
+
+    public static void setStorageDir(String dir) {
+        voiceDirPath = dir;
+    }
+
+    private static String getFilePath(String filename) {
+        return voiceDirPath + filename;
+    }
+
 }

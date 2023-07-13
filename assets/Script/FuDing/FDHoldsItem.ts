@@ -25,7 +25,7 @@ export default class FDHoldsItem extends MJHoldsItem {
     dealOperate({operate, value}) {
         super.dealOperate({operate, value});
         if (MahjongUtil.hasOperate(operate, FDOperate.BU_HUA)) {
-            this.playPlugFlower(value);
+            this.plugFlower(value);
         }
     }
 
@@ -35,7 +35,7 @@ export default class FDHoldsItem extends MJHoldsItem {
 
         let pos = this.item_holds.node.getPosition();
 
-        let gap = 80;
+        let gap = 60;
         switch (sitPos) {
             case GameConst.SitPos.DOWN:
                 this.item_flowers.node.setPosition(new cc.Vec2(pos.x, pos.y + gap));
@@ -52,13 +52,19 @@ export default class FDHoldsItem extends MJHoldsItem {
         }
     }
 
-    playPlugFlower(pai) {
+    plugFlower(pai) {
         this.flowers.push(pai);
         this.item_flowers.mahjongs = this.flowers;
     }
 
     G_PushRoomInfo() {
         this.flowers = [];
-        this.item_flowers.mahjongs = this.flowers;
+        this.item_flowers.updateMahjongs([]);
+    }
+
+    G_GameSettle(): void {
+        super.G_GameSettle();
+        this.flowers = [];
+        this.item_flowers.updateMahjongs([]);
     }
 }

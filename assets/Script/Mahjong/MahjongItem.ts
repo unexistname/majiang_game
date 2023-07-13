@@ -102,6 +102,12 @@ export default class MahjongItem extends CardEventHandle {
         }
     }
 
+    showSelect(isSelect) {
+        let child = this.node.children[0];
+        let item = child.getComponent(MahjongUnitItem);
+        item && item.showHun(isSelect);
+    }
+
     setHidden(hidden) {
         this.hidden = hidden;
         let child = this.node.children[0];
@@ -139,12 +145,15 @@ export default class MahjongItem extends CardEventHandle {
     }
 
     updateView(data) {
-        this.mahjongId = data.mahjongId;
-        this.showType = data.showType;
+        if (this.showType == data.showType && this.mahjongId == data.mahjongId) {
+            return;
+        }
+        this._showType = data.showType;
+        this._mahjongId = data.mahjongId;
+        this.updateMahjong();
     }
 
     CC_onClickMahjong() {
-        this.emit("click_card", this.mahjongId, this.node);
-        // cc.director.emit("click_card", this.mahjongId, this.node);
+        this.emit("click_card", this.mahjongId, this.node, this);
     }
 }
