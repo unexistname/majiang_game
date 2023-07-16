@@ -27,6 +27,7 @@ export default class MJFoldItem extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.clear);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Fold, this.G_Fold);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.clear);
         this.item_folds.showType = GameConst.CardShowType.SHOW;
     }
 

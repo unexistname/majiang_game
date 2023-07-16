@@ -1,5 +1,6 @@
 import UIMgr from "../BaseUI/UIMgr";
 import { GameConst } from "../Const/GameConst";
+import GameUtil from "../Util/GameUtil";
 import MahjongItem from "./MahjongItem";
 import MahjongStraightItem from "./MahjongStraightItem";
 
@@ -24,7 +25,7 @@ export default class MahjongCombineItem extends cc.Component {
     @property(MahjongStraightItem)
     node_combine3: MahjongStraightItem;
 
-    node_mahjong4: MahjongItem;
+    node_mahjong4: cc.Node;
 
     _mahjongs: number[] = [];
 
@@ -45,15 +46,23 @@ export default class MahjongCombineItem extends cc.Component {
     }
 
     updateMahjongs(mahjongs) {
+        console.log("ccccccccccccccccccc", mahjongs, this._mahjongs);
         if (mahjongs.length == this._mahjongs.length && mahjongs[0] == this._mahjongs[0]) {
             return;
         }
+        console.log("ddddddddddddddddddddddddd")
         if (this._mahjongs.length == 3 && mahjongs.length == 4) {
             this.changeCombine3ToCombine4();
         } else {
+            GameUtil.clearChildren(this.node_combine3.node);
+            if (this.node_mahjong4) {
+                this.node_mahjong4.parent = null;
+            }
+            console.log("eeeeeeeeeeeeeeeee")
             if (mahjongs.length == 3) {
                 this.createCombine3(mahjongs);
             } else if (mahjongs.length == 4) {
+                console.log("ffffffffffffffffff")
                 let mahjong = mahjongs[0];
                 this.createCombine4(mahjong, this.showType);
             }
@@ -68,6 +77,7 @@ export default class MahjongCombineItem extends cc.Component {
 
     changeCombine3ToCombine4() {
         let node = this.node_combine3.node.children[1];
+        console.log("bbbbbbbbbbbbbbbbb", node, this.mahjongs[0], this.showType);
         this.createMahjong4(node, this.mahjongs[0], this.showType);
     }
 
@@ -91,19 +101,17 @@ export default class MahjongCombineItem extends cc.Component {
                 let middle = this.node_combine3.node.children[1];
                 this.createMahjong4(middle, mahjong, showType);
             }
-            // if (index == 1) {
-            //     this.createMahjong4(node, mahjong, showType);
-            // }
         });
     }
 
-    createMahjong4(mahjong2: cc.Node, mahjong, showType) {
+    createMahjong4(mahjongNode: cc.Node, mahjong, showType) {
         let data = { mahjongId: mahjong, showType: showType};
         UIMgr.createMahjongItem(this.sitPos, this.node, data, (err, node) => {
-            let y = this.getPositionY(node) + mahjong2.position.y;
-            let pos = new cc.Vec2(mahjong2.position.x, y);
-            let realPos = this.node.convertToNodeSpace(mahjong2.parent.convertToWorldSpace(pos))
+            let y = this.getPositionY(node) + mahjongNode.position.y;
+            let pos = new cc.Vec2(mahjongNode.position.x, y);
+            let realPos = this.node.convertToNodeSpaceAR(mahjongNode.parent.convertToWorldSpaceAR(pos))
             node.setPosition(realPos);
+            console.log("aaaaaaaaaaaaaaaa", mahjong, pos, realPos, node);
             this.node_mahjong4 = node;
         });
     }

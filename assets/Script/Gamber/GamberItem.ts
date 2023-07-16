@@ -66,6 +66,7 @@ export default class GamberItem extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Chat, this.G_Chat);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Voice, this.G_Voice);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Emoji, this.G_Emoji);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_EatPoint, this.G_EatPoint);
     }
 
     updateView(data: any) {
@@ -76,7 +77,7 @@ export default class GamberItem extends cc.Component {
         this.node_choose_banker.active = GameMgr.ins.isBanker(this.userId);
         this.txt_betting.string = GameMgr.ins.getBettingScore(this.userId).toString();
         this.txt_score.string = GameMgr.ins.getGamberScore(this.userId).toString();
-        this.node_offline.active = data.offline;
+        this.node_offline.active = !RoomMgr.ins.isGamberOnline(this.userId);
         this.node_ready.active = this.getReadyState(data);
         UIMgr.setSprite(this.sp_avatar, data.avatarUrl);
     }
@@ -165,6 +166,15 @@ export default class GamberItem extends cc.Component {
         }
     }
 
+    G_EatPoint(data) {
+        if (data.userId == this.userId) {
+            this.node_betting.getChildByName("desc_betting").active = false;
+            this.txt_betting.string = data.finalPoint;
+            console.log("bbbbbbbbbbbb", data);
+            this.node_betting.active = true;
+        }
+    }
+
     G_UserState(data) {
         if (this.userId == data.userId) {
             this.node_offline.active = !data.online;
@@ -184,7 +194,6 @@ export default class GamberItem extends cc.Component {
     chooseBanker(isBanker: boolean) {
         this.node_choose_banker.active = isBanker;
         cc.director.emit("choose_banker");
-        // cc.vv.audioMgr.playSFX("qiang.mp3","niuniu");
     }
 
     decideBanker(isBanker) {

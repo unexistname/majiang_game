@@ -411,8 +411,9 @@ export default class RoomView extends cc.Component {
             propStartNode.rotation = 0;
             propStartNode.setPosition(startPos);
             propStartNode.runAction(cc.sequence(
-                cc.spawn(cc.scaleTo(1,1),
-                    cc.moveTo(1,pos),
+                cc.spawn(
+                    cc.scaleTo(1, 1),
+                    cc.moveBy(1, pos),
                     // @ts-ignore
                     cc.rotateBy(1,360)).easing(cc.easeElasticInOut(3.0)
                 ),

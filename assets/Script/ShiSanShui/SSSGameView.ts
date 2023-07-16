@@ -20,6 +20,8 @@ export default class SSSGameView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Betting, this.G_Betting);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Combine, this.hidden);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.hidden);
+        // NetMgr.addListener(this, NetDefine.WS_Resp.G_Special, this.G_Special);
+        
     }
 
     initView() {

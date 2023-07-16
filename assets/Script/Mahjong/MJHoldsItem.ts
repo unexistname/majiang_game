@@ -40,10 +40,14 @@ export default class MJHoldsItem extends CardEventHandle {
         }
 
         this.updateSitPos();
+        let penggangs = GameMgr.ins.getPengGangs(this.userId);
         let holds = GameMgr.ins.getHoldsByUserId(this.userId);
         let drawCard = GameMgr.ins.getDrawCard(this.userId);
         if (holds) {
             this.item_holds.updateHolds(holds);
+        }
+        if (penggangs) {
+            this.updateCombines(penggangs);
         }
         if (drawCard != null) {
             this.item_holds.updateDrawCard(drawCard);
@@ -71,6 +75,7 @@ export default class MJHoldsItem extends CardEventHandle {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnPlayCard, this.G_TurnPlayCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncHolds, this.G_SyncHolds);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncCombines, this.G_SyncCombines);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.G_ShowCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.updateSitPos);
@@ -123,6 +128,12 @@ export default class MJHoldsItem extends CardEventHandle {
         }
     }
 
+    G_SyncCombines(data) {
+        if (data.userId == this.userId) {
+            this.updateCombines(data.penggangs);
+        }
+    }
+
     G_ShowCard(data) {
         if (data[this.userId]) {
             let holds = data[this.userId].holds;
@@ -154,7 +165,7 @@ export default class MJHoldsItem extends CardEventHandle {
         this.item_holds.hideDrawMahjong();
         this.item_holds.updateHolds([]);
         this.updateCombines([]);
-        this.cancelClickMahjong();    
+        this.cancelClickMahjong();
         this.hangang = null;
         this.item_holds.showType = GameConst.CardShowType.STAND;
     }

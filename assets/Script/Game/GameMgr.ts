@@ -40,10 +40,13 @@ export default class GameMgr {
 
     friendCard: number;
 
+    penggangs: { [key: string]: any } = {};
+
     init() {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Hun, this.G_Hun);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_InitHolds, this.G_InitHolds);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncHolds, this.G_SyncHolds);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncCombines, this.G_SyncCombines);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DecideBanker, this.G_DecideBanker);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GamberScoreChange, this.G_GamberScoreChange);
@@ -139,6 +142,10 @@ export default class GameMgr {
         this.holds[data.userId] = data.holds;
     }
 
+    G_SyncCombines(data) {
+        this.penggangs[data.userId] = data.penggangs;
+    }
+
     getDrawCard(userId) {
         return this.drawCard[userId];
     }
@@ -155,6 +162,10 @@ export default class GameMgr {
         return this.getHoldsByUserId(MeModel.userId);
     }
 
+    getPengGangs(userId) {
+        return this.penggangs[userId] || [];
+    }
+
     isBanker(userId) {
         return this.bankerId == userId;
     }
@@ -162,6 +173,7 @@ export default class GameMgr {
     G_GameSettle(data) {
         this.holds = {};
         this.drawCard = {};
+        this.penggangs = {};
         this.operates = {};
         UIMgr.showView("SettleView", data);
     }

@@ -43,6 +43,7 @@ export default class RoomMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_UserState, this.G_UserState);
     }
 
     generateGamberOrder() {
@@ -170,6 +171,19 @@ export default class RoomMgr {
         this.gambers = data.gambers;
         this.maxGamberNum = data.gamberAmount;
         this.generateGamberOrder();
+    }
+
+    G_UserState(data) {
+        if (this.gambers[data.userId]) {
+            this.gambers[data.userId].online = data.online;
+        }
+    }
+
+    isGamberOnline(userId) {
+        if (this.gambers[userId] && this.gambers[userId].online != null) {
+            return this.gambers[userId].online;
+        }
+        return true;
     }
 
     goToGame() {

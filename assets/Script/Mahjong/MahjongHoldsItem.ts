@@ -96,10 +96,16 @@ export default class MahjongHoldsItem extends CardEventHandle {
     @property(MahjongItem)
     item_drawCard: MahjongItem;
 
+    loading: {} = {};
+
+
     updateCombines(combines) {
         let combineItems = this.node_combines.children;
         for (let i = 0; i < combines.length; ++i) {
             let data = combines[i].combine;
+            if (this.loading[i]) {
+                continue;
+            }
             if (!combineItems[i]) {
                 this.createCombineItem(i, data);
             } else {
@@ -132,10 +138,12 @@ export default class MahjongHoldsItem extends CardEventHandle {
     }
 
     createCombineItem(index, data) {
+        this.loading[index] = true;
         UIMgr.createPrefab("MahjongCombineItem", this.node_combines, null, (err, node) => {
             let item = node.getComponent(MahjongCombineItem);
             item.setSitPos(this.sitPos);
             item.updateView(data);
+            this.loading[index] = false;
         });
     }
 }

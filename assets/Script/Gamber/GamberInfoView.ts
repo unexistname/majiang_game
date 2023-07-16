@@ -41,8 +41,7 @@ export default class GamberInfoView extends cc.Component {
 
     userId: string;
 
-    protected start(): void {
-        console.log("uuuuuuuuuuuuuu");
+    protected onLoad(): void {
         this.node.active = false;
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GamberInfo, this.G_GamberInfo);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowProp, this.G_ShowProp);
@@ -61,7 +60,6 @@ export default class GamberInfoView extends cc.Component {
         this.txt_userName.string = data.userName;
         this.txt_winRate.string = data.winRate;
         this.node.active = true;
-        console.log("zzzzzzzzzzzzzz");
     }
 
     G_ShowProp(data) {

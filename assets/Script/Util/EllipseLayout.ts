@@ -121,7 +121,7 @@ export default class EllipseLayout extends cc.Component {
                     tmpSeatNodes[newLocalIndex] = this.seatNodes[localIndex];
                     break;
                 }
-            }            
+            }
         }
         this.seatNodes = tmpSeatNodes;
         this._doLayout(this.node.children, true);

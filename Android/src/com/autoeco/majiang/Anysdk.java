@@ -61,6 +61,12 @@ public class Anysdk implements LocationListener {
                 updateLocation();
             }
         });
+        App.requestPermission(new String[]{Manifest.permission.RECORD_AUDIO,Manifest.permission.WRITE_EXTERNAL_STORAGE}, new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
     }
 
     public static void login() {
@@ -197,13 +203,18 @@ public class Anysdk implements LocationListener {
         public void run() {
             //要做的事情
             if (mMediaRecorder == null) return;
-            double ratio = (double) mMediaRecorder.getMaxAmplitude() / 100;
+            double ratio = 0;
+            try {
+                ratio = (double) mMediaRecorder.getMaxAmplitude() / 100;
+            } catch (IllegalStateException e) {
+//                e.printStackTrace();
+            }
             double db = 0;// 分贝
             //默认的最大音量是100,可以修改，但其实默认的，在测试过程中就有不错的表现
             //你可以传自定义的数字进去，但需要在一定的范围内，比如0-200，就需要在xml文件中配置maxVolume
             //同时，也可以配置灵敏度sensibility
             if (ratio > 1) {
-                db = 30 * Math.log10(ratio);
+                db = 100 * Math.log10(ratio);
             }
 
             //获取音量大小
@@ -219,7 +230,7 @@ public class Anysdk implements LocationListener {
             mMediaRecorder = new MediaRecorder();
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
             File file = new File(getFilePath(filename));
             if (!file.exists()) {
                 try {
@@ -244,8 +255,15 @@ public class Anysdk implements LocationListener {
 
     public static void finishRecord() {
         handler.removeCallbacks(runnable);
-        mMediaRecorder.stop();
-        mMediaRecorder.release();
+        if (mMediaRecorder != null) {
+            try {
+                mMediaRecorder.stop();
+            } catch (Exception e) {
+                mMediaRecorder = null;
+                mMediaRecorder = new MediaRecorder();
+            }
+            mMediaRecorder.release();
+        }
         mMediaRecorder = null;
     }
 
@@ -254,6 +272,8 @@ public class Anysdk implements LocationListener {
     }
 
     public static void playVoice(String filename) {
+        Log.i(TAG, "playVoice: " + getFilePath(filename));
+        Log.i(TAG, "文件是否存在: " + new File(getFilePath(filename)).exists());
         mPlayer = new MediaPlayer();
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -266,18 +286,28 @@ public class Anysdk implements LocationListener {
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
-            Log.i(TAG, "playVoice: ");
+            e.printStackTrace();
         }
     }
 
     public static void stopVoice() {
         if (mPlayer != null) {
             mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
         }
     }
 
     public static void setStorageDir(String dir) {
         voiceDirPath = dir;
+        File dirFile = new File(dir);
+        if (!dirFile.exists()) {
+            try {
+                dirFile.mkdirs();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static String getFilePath(String filename) {

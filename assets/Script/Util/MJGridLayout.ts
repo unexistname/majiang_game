@@ -101,7 +101,7 @@ export default class MJGridLayout extends cc.Component {
             // @ts-ignore
             this.node.getComponent(cc.Layout)._doLayout();
             this.node.getComponent(cc.Layout).enabled = false;
-            this._adjustOrder(needReverse);
+            this._adjustOrder();
         });
     }
 
@@ -174,11 +174,11 @@ export default class MJGridLayout extends cc.Component {
     getSuitAnchorY() {
         switch (this.sitPos) {
             case GameConst.SitPos.DOWN:
-                return 0;
+                return 1;
             case GameConst.SitPos.RIGHT:
                 return 0.5;
             case GameConst.SitPos.TOP:
-                return 1;
+                return 0;
             case GameConst.SitPos.LEFT:
                 return 0.5;
         }
