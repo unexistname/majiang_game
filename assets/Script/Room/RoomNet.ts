@@ -71,4 +71,8 @@ export default class RoomNet {
         NetMgr.tcpSend(NetDefine.WS_Req.C_Emoji, data, UrlModel.gameUrl);
     }
 
+    static C_DissolveVote(vote: boolean) {
+        let data = { vote: vote };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_DissolveVote, data, UrlModel.gameUrl);
+    }
 }

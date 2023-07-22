@@ -53,13 +53,11 @@ export default class ZJHCompareResultView extends cc.Component {
 
     updateView(data) {
         let gamber = RoomMgr.ins.getGamber(data.userId);
-        
         let cmpGamber = RoomMgr.ins.getGamber(data.cmpUserId);
         
         this.gamberLeft.updateView(gamber);
         this.gamberRight.updateView(cmpGamber);
         this.node.active = true;
-        console.log("zzzzzzzzzzz", this.node.active);
         // setTimeout(() => {
         //     this.node.active = false
         // }, 800);

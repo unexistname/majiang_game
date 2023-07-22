@@ -3,6 +3,7 @@ import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
 import GameMgr from "../Game/GameMgr";
 import MeModel from "../Global/MeModel";
+import MahjongUtil from "../Mahjong/MahjongUtil";
 import RoomMgr from "../Room/RoomMgr";
 import GameUtil from "../Util/GameUtil";
 
@@ -47,6 +48,12 @@ export default class GamberItem extends cc.Component {
     @property(cc.Node)
     node_ready: cc.Node;
 
+    @property(cc.Node)
+    node_wind: cc.Node;
+
+    @property(cc.Label)
+    txt_wind: cc.Label;
+
     @property(cc.Label)
     txt_userName: cc.Label;
 
@@ -66,6 +73,7 @@ export default class GamberItem extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Chat, this.G_Chat);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Voice, this.G_Voice);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Emoji, this.G_Emoji);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_DecideWind, this.G_DecideWind);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_EatPoint, this.G_EatPoint);
     }
 
@@ -79,6 +87,7 @@ export default class GamberItem extends cc.Component {
         this.txt_score.string = GameMgr.ins.getGamberScore(this.userId).toString();
         this.node_offline.active = !RoomMgr.ins.isGamberOnline(this.userId);
         this.node_ready.active = this.getReadyState(data);
+        if (this.node_wind) this.node_wind.active = GameMgr.ins.getGamberWind(this.userId) != null;
         UIMgr.setSprite(this.sp_avatar, data.avatarUrl);
     }
 
@@ -166,11 +175,17 @@ export default class GamberItem extends cc.Component {
         }
     }
 
+    G_DecideWind(data) {
+        if (data[this.userId] != null) {
+            this.txt_wind.string = MahjongUtil.getDirection(data[this.userId]);
+            this.node_wind.active = true;
+        }
+    }
+
     G_EatPoint(data) {
         if (data.userId == this.userId) {
             this.node_betting.getChildByName("desc_betting").active = false;
-            this.txt_betting.string = data.finalPoint;
-            console.log("bbbbbbbbbbbb", data);
+            this.txt_betting.string = "吃分:" + data.finalPoint;
             this.node_betting.active = true;
         }
     }

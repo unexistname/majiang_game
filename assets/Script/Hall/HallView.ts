@@ -74,7 +74,9 @@ export default class HallView extends cc.Component {
     }
     
     CC_onClickShop() {
-        UIMgr.showView("ShopView");
+        HallNet.C_ShowRecharge((ret) => {
+            UIMgr.showView("ShopView", ret);
+        });
     }
 
     CC_onClickSetting() {

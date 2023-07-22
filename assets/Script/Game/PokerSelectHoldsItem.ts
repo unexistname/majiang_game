@@ -27,7 +27,7 @@ export default class PokerSelectHoldsItem extends CardEventHandle {
             }
             if (!this.holdNodes[i]) {
                 this.holdNodes[i] = UIMgr.createNode(this.prefab_poker, this.node, PokerItem, pokerId);
-                this.collect(this.holdNodes[i]);
+                // this.collect(this.holdNodes[i]);
             } else {
                 this.holdNodes[i].getComponent(PokerItem).updateView(pokerId);
             }

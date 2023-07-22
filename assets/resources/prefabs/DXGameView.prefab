@@ -288,7 +288,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        24.065,
+        -15,
         0,
         0,
         0,
@@ -674,17 +674,8 @@
       "__id__": 1
     },
     "_enabled": true,
-    "node_allHolds": {
-      "__id__": 4
-    },
-    "node_fundPool": {
-      "__id__": 6
-    },
     "txt_fundPool": {
       "__id__": 11
-    },
-    "prefab_holds": {
-      "__uuid__": "f001f69b-fd59-4240-9f61-12fc7fc20852"
     },
     "prefab_operate_view": {
       "__uuid__": "3ffd6224-d84c-42ea-b393-94fb7d885f11"

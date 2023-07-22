@@ -80,6 +80,8 @@ export default class MJHoldsItem extends CardEventHandle {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.updateSitPos);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.updateSitPos);
+        NetMgr.addListener(this, NetDefine.WS_Resp.GA_ReplaceCard, this.GA_ReplaceCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.GA_Perspect, this.GA_Perspect);
     }
 
     cancelClickMahjong() {
@@ -109,10 +111,26 @@ export default class MJHoldsItem extends CardEventHandle {
         }
     }
 
+    GA_Perspect(data) {
+        if (data[this.userId]) {
+            let holds = data[this.userId];
+            this.item_holds.showType = GameConst.CardShowType.SHOW;
+            this.item_holds.updateHolds(holds);
+            this.item_holds.hideDrawMahjong();
+        }
+    }
+
     G_InitHolds(data) {
         if (data[this.userId]) {
             console.log("初始化的牌", data[this.userId]);
             this.updateHolds(data[this.userId], GameMgr.ins.isBanker(this.userId));
+        }
+    }
+
+    GA_ReplaceCard(data) {
+        if (MeModel.isMe(this.userId)) {
+            let hasDrawCard = GameMgr.ins.getDrawCard(MeModel.userId) != null;
+            this.updateHolds(data.holds, hasDrawCard);
         }
     }
 

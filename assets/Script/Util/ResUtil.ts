@@ -61,6 +61,41 @@ export default class ResUtil {
         }
     }
 
+    static getPokerDecorResPath(pokerId: number) {
+        if (pokerId == -1) {
+            return "textures/pokerBig/card_backsmall";
+        } else {
+            let decor = pokerId % 10;
+            let value = this.getPokerValue(pokerId);
+            return "textures/pokerBig/" + value + decor;
+        }
+    }
+
+    static getPokerValueResPath(pokerId: number) {
+        if (pokerId == -1) {
+            return "textures/pokerBig/card_backsmall";
+        } else {
+            let decor = pokerId % 10;
+            let value = this.getPokerValue(pokerId);
+            if (decor == 5) {
+                return
+            } else if (decor % 2 == 1) {
+                return "textures/pokerBig/black_" + value;
+            } else {
+                return "textures/pokerBig/red_" + value;
+            }
+        }
+    }
+
+    static getPokerValue(pokerId) {
+        let value = Math.floor(pokerId / 10);
+        if (value > 10) {
+            return "JQK".charAt(value - 11);
+        } else {
+            return value + "";
+        }
+    }
+
     static getMahjongResId(mahjongId: number) {
         if (mahjongId >= 0 && mahjongId < 9) {
             return mahjongId + 11;

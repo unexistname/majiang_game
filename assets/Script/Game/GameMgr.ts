@@ -42,10 +42,15 @@ export default class GameMgr {
 
     penggangs: { [key: string]: any } = {};
 
+    wind: { [key: string]: number } = {};
+
+    turnData: any = null;
+
     init() {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Hun, this.G_Hun);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_InitHolds, this.G_InitHolds);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncHolds, this.G_SyncHolds);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_SeeCard, this.G_SeeCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SyncCombines, this.G_SyncCombines);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DecideBanker, this.G_DecideBanker);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
@@ -56,6 +61,7 @@ export default class GameMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_FriendCard, this.G_FriendCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_DecideWind, this.G_DecideWind);
         // NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
     }
 
@@ -85,6 +91,11 @@ export default class GameMgr {
 
     G_TurnBetting(data) {
         this.operates[data.userId] = null;
+        this.turnData = data;
+    }
+
+    getTurnData() {
+        return this.turnData;
     }
 
     G_LeaveRoom(data) {
@@ -96,6 +107,14 @@ export default class GameMgr {
 
     isBettingState() {
         return this.gameState == GameConst.GameState.BETTING;
+    }
+
+    G_DecideWind(data) {
+        this.wind = data;
+    }
+
+    getGamberWind(userId) {
+        return this.wind[userId];
     }
 
     G_GamberScoreChange(data) {
@@ -134,6 +153,10 @@ export default class GameMgr {
 
     G_InitHolds(data) {
         this.holds = data;
+    }
+
+    G_SeeCard(data) {
+        this.holds[data.userId] = data.holds;
     }
 
     G_SyncHolds(data) {

@@ -43,4 +43,9 @@ export default class DXHoldsItem extends BaseHoldsItem {
             }
         }
     }
+
+    G_GameSettle() {
+        super.G_GameSettle();
+        this.txt_op.string = "";
+    }
 }

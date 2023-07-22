@@ -94,7 +94,7 @@ export default class MahjongStraightItem extends CardEventHandle {
             this.loadingNodes[index] = node;
             for (let i = this.node.children.length; this.loadingNodes[i]; i = this.node.children.length) {
                 this.node.addChild(this.loadingNodes[i]);
-                this.collect(this.loadingNodes[i]);
+                // this.collect(this.loadingNodes[i]);
                 this.adjustSize();
                 if (this._mahjongs[i] == null) {
                     this.loadingNodes[i].active = false;

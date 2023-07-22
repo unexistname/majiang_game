@@ -24,6 +24,8 @@ export default class RoomMgr {
 
     gambers: {} = {};
 
+    dissolveVotes: {} = {};
+
     maxGamberNum: number;
 
     maxGamberSeatIndex: number;
@@ -44,6 +46,7 @@ export default class RoomMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_UserState, this.G_UserState);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_DissolveVote, this.G_DissolveVote);
     }
 
     generateGamberOrder() {
@@ -87,6 +90,14 @@ export default class RoomMgr {
         this.gambers[data.userId].seatIndex = data.userSeatIndex;
         this.gambers[data.anotherUserId].seatIndex = data.anotherSeatIndex;
         this.generateGamberOrder();
+    }
+
+    G_DissolveVote(data) {
+        this.dissolveVotes[data.userId] = data;
+    }
+
+    getDissolveVote() {
+        return this.dissolveVotes;
     }
 
     getOldSeatIndex() {
@@ -187,7 +198,6 @@ export default class RoomMgr {
     }
 
     goToGame() {
-        // NetMgr.changeTcpUrl(UrlModel.gameUrl);
         cc.director.loadScene("Game", () => {
             NetMgr.changeTcpUrl(UrlModel.gameUrl);
         });

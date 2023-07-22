@@ -27,27 +27,28 @@ export default class AdminReplaceCardView extends CardEventHandle {
 
     item_selectHeap: any;
 
-    protected start(): void {
+    protected onLoad(): void {
         NetMgr.addListener(this, NetDefine.WS_Resp.GA_ReplaceCard, this.GA_ReplaceCard);
-        this.register("click_card", this.Slot_ClickCard.bind(this));
+        this.node_heapCards.getComponent(CardEventHandle).register("click_card", this.Slot_ClickHeap.bind(this));
+        this.node_myCards.getComponent(CardEventHandle).register("click_card", this.Slot_ClickHold.bind(this));
     }
-    
-    Slot_ClickCard(cardId, node, component) {
-        if (GameUtil.isBelongTo(this.node_myCards, node)) {
-            if (this.item_selectHold) {
-                this.item_selectHold.showSelect(false);
-            }
-            component.showSelect(true);
-            this.item_selectHold = component;
-            this.selectHold = cardId;
-        } else {
-            if (this.item_selectHeap) {
-                this.item_selectHeap.showSelect(false);
-            }
-            component.showSelect(true);
-            this.item_selectHeap = component;
-            this.selectHeap = cardId;
+
+    Slot_ClickHold(cardId, node, component) {
+        if (this.item_selectHold) {
+            this.item_selectHold.showSelect(false);
         }
+        component.showSelect(true);
+        this.item_selectHold = component;
+        this.selectHold = cardId;
+    }
+
+    Slot_ClickHeap(cardId, node, component) {
+        if (this.item_selectHeap) {
+            this.item_selectHeap.showSelect(false);
+        }
+        component.showSelect(true);
+        this.item_selectHeap = component;
+        this.selectHeap = cardId;
     }
 
     GA_ReplaceCard(data) {

@@ -9,6 +9,9 @@ export default class MahjongUnitItem extends cc.Component {
 
     sitPos: GameConst.SitPos;
 
+    @property(cc.Node)
+    node_select: cc.Node;
+
     @property(cc.Sprite)
     sp_mahjong_show: cc.Sprite;
 
@@ -20,6 +23,12 @@ export default class MahjongUnitItem extends cc.Component {
 
     setSitPos(sitPos) {
         this.sitPos = sitPos;
+    }
+
+    showSelect(isSelect) {
+        if (this.node_select) {
+            this.node_select.active = isSelect;
+        }
     }
 
     showHun(isHun) {

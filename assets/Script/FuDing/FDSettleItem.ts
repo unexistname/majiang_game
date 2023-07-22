@@ -114,9 +114,8 @@ export default class FDSettleItem extends cc.Component {
         }
         this.node_banker.active = data.isBanker;
 
-        const DIRECTION = "东南西北";
         if (data.direction != null) {
-            this.txt_wind.string = DIRECTION.charAt(data.direction);
+            this.txt_wind.string = MahjongUtil.getDirection(data.direction);
         }
 
         this.item_score.updateScore(data.score);

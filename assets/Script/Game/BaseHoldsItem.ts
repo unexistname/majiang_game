@@ -1,6 +1,8 @@
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
+import MeModel from "../Global/MeModel";
 import CardEventHandle from "../Mahjong/CardEventHandle";
+import GameMgr from "./GameMgr";
 import PokerHoldsItem from "./PokerHoldsItem";
 
 const { ccclass, property } = cc._decorator;
@@ -18,10 +20,24 @@ export default class BaseHoldsItem extends CardEventHandle {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.G_ShowCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SeeCard, this.G_SeeCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.GA_ReplaceCard, this.GA_ReplaceCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.GA_Perspect, this.GA_Perspect);
     }
 
     G_SeeCard(data) {
         if (data.userId == this.userId) {
+            this.updateHolds(data.holds);
+        }
+    }
+
+    GA_Perspect(data) {
+        if (data[this.userId]) {
+            this.updateHolds(data[this.userId]);
+        }
+    }
+
+    GA_ReplaceCard(data) {
+        if (MeModel.isMe(this.userId)) {
             this.updateHolds(data.holds);
         }
     }
@@ -49,5 +65,9 @@ export default class BaseHoldsItem extends CardEventHandle {
 
     setUserId(userId: string) {
         this.userId = userId;
+        let holds = GameMgr.ins.getHoldsByUserId(userId);
+        if (holds) {
+            this.updateHolds(holds);
+        }
     }
 }

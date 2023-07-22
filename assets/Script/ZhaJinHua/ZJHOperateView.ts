@@ -3,6 +3,7 @@ import { NetDefine } from "../Const/NetDefine";
 import MeModel from "../Global/MeModel";
 import ZJHNet from "./ZJHNet";
 import ZJHOperate from "./ZJHOperate";
+import GameMgr from "../Game/GameMgr";
 
 const { ccclass, property } = cc._decorator;
 
@@ -27,7 +28,15 @@ export default class ZJHOpeateView extends cc.Component {
     start() {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.hidden);
+        this.initView();
+    }
+
+    initView() {
         this.node.active = false;
+        let turnData = GameMgr.ins.getTurnData();
+        if (turnData) {
+            this.G_TurnBetting(turnData);
+        }
     }
 
     updateView(optionalOperate: number) {

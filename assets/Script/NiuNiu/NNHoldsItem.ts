@@ -1,6 +1,4 @@
 import UIMgr from "../BaseUI/UIMgr";
-import { NetDefine } from "../Const/NetDefine";
-import NetMgr from "../Controller/Net/NetMgr";
 import BaseHoldsItem from "../Game/BaseHoldsItem";
 import ResUtil from "../Util/ResUtil";
 
@@ -29,5 +27,10 @@ export default class NNHoldsItem extends BaseHoldsItem {
                 }
             });
         }
+    }
+
+    G_GameSettle() {
+        super.G_GameSettle();
+        this.sp_niu.node.active = false;
     }
 }

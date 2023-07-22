@@ -28,4 +28,9 @@ export default class ZJHHoldsItem extends BaseHoldsItem {
             }
         }
     }
+
+    G_GameSettle() {
+        super.G_GameSettle();
+        this.node_seeCard.active = false;
+    }
 }

@@ -31,6 +31,8 @@ export enum ErrorCode {
     YOU_CARD_IS_SMALL,
     COMBINE_CARD_ERROR,
     
+    OWNER_MONEY_NOT_ENOUGH,
+    GAMBER_MONEY_NOT_ENOUGH,
     GEM_AMOUNT_ERROR,
     GEM_NOT_ENOUGH,
     UNEXIST_SERIES,
@@ -94,6 +96,8 @@ errorMsg[ErrorCode.CARD_TYPE_DIFFERENT] = "牌型不对";
 errorMsg[ErrorCode.YOU_CARD_IS_SMALL] = "你的牌太小了";
 errorMsg[ErrorCode.COMBINE_CARD_ERROR] = "组牌有误";
 
+errorMsg[ErrorCode.OWNER_MONEY_NOT_ENOUGH] = "房主房费不足";
+errorMsg[ErrorCode.GAMBER_MONEY_NOT_ENOUGH] = "有玩家无法支付房费";
 errorMsg[ErrorCode.GEM_AMOUNT_ERROR] = "钻石数量有误";
 errorMsg[ErrorCode.GEM_NOT_ENOUGH] = "钻石不足";
 errorMsg[ErrorCode.UNEXIST_SERIES] = "套餐不存在";

@@ -69,10 +69,12 @@ export default class MahjongItem extends CardEventHandle {
     }
 
     protected onEnable(): void {
+        super.onEnable();
         this._addEventListeners();
     }
 
     protected onDisable(): void {
+        super.onDisable();
         this._removeEventListeners();
     }
 
@@ -105,7 +107,7 @@ export default class MahjongItem extends CardEventHandle {
     showSelect(isSelect) {
         let child = this.node.children[0];
         let item = child.getComponent(MahjongUnitItem);
-        item && item.showHun(isSelect);
+        item && item.showSelect(isSelect);
     }
 
     setHidden(hidden) {
@@ -128,7 +130,6 @@ export default class MahjongItem extends CardEventHandle {
             this._loadingMahjongId = this.mahjongId;
             let data = { mahjongId: this.mahjongId, showType: this.showType };
             UIMgr.createMahjongUnit(this.sitPos, this.node, data, (err, node) => {
-                this.collect(node);
                 if (this._loadingMahjongId != this._mahjongId) {
                     this._updateMahjongSprte();
                 }
@@ -154,6 +155,7 @@ export default class MahjongItem extends CardEventHandle {
     }
 
     CC_onClickMahjong() {
+        console.log("点击了麻将", this.mahjongId, this._events);
         this.emit("click_card", this.mahjongId, this.node, this);
     }
 }

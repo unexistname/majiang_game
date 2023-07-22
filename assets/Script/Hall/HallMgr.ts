@@ -28,6 +28,7 @@ export default class HallMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_EnterRoom, this.G_EnterRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCreateRoom, this.G_ShowCreateRoom);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_Dissolve, this.G_Dissolve);
     }
 
     initMgr() {
@@ -47,6 +48,13 @@ export default class HallMgr {
         if (MeModel.isMe(data.userId)) {
             this.goToHall();
         }
+    }
+
+    G_Dissolve() {
+        UIMgr.showTip("房间已解散");
+        setTimeout(() => {
+            this.goToHall();
+        }, 1500);
     }
 
     showCreateRoom() {

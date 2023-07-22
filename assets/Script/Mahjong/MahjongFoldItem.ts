@@ -13,9 +13,19 @@ const { ccclass, menu, property, executeInEditMode } = cc._decorator;
 export default class MahjongFoldItem extends cc.Component {
 
     _mahjongs: Array<number> = [];
+
+    _mahjongNumOneLine: number = 16;
     
     @property({type: cc.Integer})
-    mahjongNumOneLine: number = 10;
+    set mahjongNumOneLine(val) {
+        this._mahjongNumOneLine = val;
+        let comp = this.node_folds.getComponent(MJGridLayout);
+        comp && (comp.mahjongNumOneLine = val);
+    }
+
+    get mahjongNumOneLine() {
+        return this._mahjongNumOneLine;
+    }
 
     @property(cc.Node)
     node_folds: cc.Node;
@@ -39,10 +49,15 @@ export default class MahjongFoldItem extends cc.Component {
     
     @property({ type:cc.Enum(GameConst.SitPos) })
     set sitPos(val) {
-        if (val == this._sitPos) {
-            return;
-        }
+        // if (val == this._sitPos) {
+        //     return;
+        // }
         this._sitPos = val;
+        if (val == GameConst.SitPos.DOWN || val == GameConst.SitPos.TOP) {
+            this.mahjongNumOneLine = 14;
+        } else {
+            this.mahjongNumOneLine = 12;
+        }
 
         this.node_folds.getComponent(MJGridLayout).sitPos = val;
     }

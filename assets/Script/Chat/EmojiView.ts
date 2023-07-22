@@ -37,7 +37,6 @@ export default class EmojiView extends cc.Component {
     //         }
     //         res += ch;
     //     }
-    //     console.log("kkkkkkkkkkkkk", name, res);
     //     return res;
     // }
 

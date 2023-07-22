@@ -35,4 +35,9 @@ export default class MahjongUtil {
     static isZiMo(winTypes: GameConst.HuType[]) {
         return winTypes.indexOf(GameConst.HuType.ZI_MO) >= 0;
     }
+
+    static getDirection(direction: number) {
+        const DIRECTION = "东南西北";
+        return DIRECTION.charAt(direction);
+    }
 }

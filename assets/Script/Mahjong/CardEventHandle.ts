@@ -1,6 +1,9 @@
 import LogUtil from "../Util/LogUtil";
 
+const { ccclass, menu } = cc._decorator;
 
+@ccclass
+@menu("特殊组件/CardEventHandle")
 export default class CardEventHandle extends cc.Component {
 
     _end: boolean = false;
@@ -8,6 +11,18 @@ export default class CardEventHandle extends cc.Component {
     _events: { [key: string]: Function[] } = {};
 
     _burial: { [key: string]: Function[] } = {};
+
+    protected onEnable(): void {
+        this.node.on(cc.Node.EventType.CHILD_ADDED, this._childAdd, this);
+    }
+
+    protected onDisable(): void {
+        this.node.off(cc.Node.EventType.CHILD_ADDED, this._childAdd, this);
+    }
+
+    _childAdd(child) {
+        this.collect(child);
+    }
 
     collect(node) {
         let handle = node.getComponent(CardEventHandle);

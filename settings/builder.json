@@ -6,7 +6,7 @@
     "portrait": false,
     "upsideDown": false
   },
-  "packageName": "org.cocos2d.helloworld",
+  "packageName": "com.autoeco.majiang",
   "startScene": "a8ced277-d4a3-41ef-aac0-e1b6f31cd8cb",
   "title": "majiang",
   "webOrientation": "landscape",
@@ -24,10 +24,10 @@
     "packageName": "com.autoeco.majiang"
   },
   "ios": {
-    "packageName": "org.cocos2d.helloworld"
+    "packageName": "com.autoeco.majiang"
   },
   "mac": {
-    "packageName": "org.cocos2d.helloworld"
+    "packageName": "com.autoeco.majiang"
   },
   "win32": {},
   "android-instant": {

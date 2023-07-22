@@ -16,20 +16,19 @@ export default class PokerHoldsItem extends CardEventHandle {
     holds: [] = [];
 
     updateHolds(holds) {
-        for (var i = 0; i < holds.length; ++i) {
+        for (let i = 0; i < holds.length; ++i) {
             let pokerId = holds[i];
             if (pokerId == this.holds[i]) {
                 continue;
             }
             if (!this.holdNodes[i]) {
                 this.holdNodes[i] = UIMgr.createNode(this.prefab_poker, this.node, PokerItem, pokerId);
-                this.collect(this.holdNodes[i]);
             } else {
                 this.holdNodes[i].getComponent(PokerItem).updateView(pokerId);
             }
             this.holdNodes[i].active = true;
         }
-        for (; i < this.holds.length; ++i) {
+        for (let i = holds.length; i < this.holds.length; ++i) {
             if (this.holdNodes[i]) {
                 this.holdNodes[i].active = false;
             }

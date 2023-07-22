@@ -1,14 +1,15 @@
 import UIMgr from "../BaseUI/UIMgr";
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
+import ResUtil from "../Util/ResUtil";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class DXRubCardView extends cc.Component {
 
-    @property(cc.Sprite)
-    sp_poker: cc.Sprite;
+    @property(cc.Node)
+    node_poker: cc.Node;
 
     @property(cc.Node)
     node_back: cc.Node;
@@ -35,8 +36,19 @@ export default class DXRubCardView extends cc.Component {
     }
 
     updateView(holds) {
-        UIMgr.setPoker(this.node_back.getComponent(cc.Sprite), holds[0]);
-        UIMgr.setPoker(this.sp_poker, holds[1]);
+        this.setPoker(this.node_back, holds[0]);
+        this.setPoker(this.node_poker, holds[1]);
+    }
+
+    setPoker(node, pokerId) {
+        UIMgr.setSprite(node.getComponent(cc.Sprite), ResUtil.getPokerDecorResPath(pokerId));
+        let path = ResUtil.getPokerValueResPath(pokerId);
+        for (let child of node.children) {
+            if (path) {
+                UIMgr.setSprite(child.getComponent(cc.Sprite), path);
+            }
+            child.active = path != null;
+        }
     }
 
     onTouchDown(event) {
@@ -99,7 +111,7 @@ export default class DXRubCardView extends cc.Component {
     }
 
     canRubOver(posX: number, posY: number) {
-        return Math.abs(posX) > 60 || Math.abs(posY) > 100;
+        return Math.abs(posX) > 200 || Math.abs(posY) > 300;
     }
 
     getRubEndPos(posX: number, posY: number) {

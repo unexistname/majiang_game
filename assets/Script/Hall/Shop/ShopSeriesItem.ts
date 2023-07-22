@@ -4,6 +4,7 @@ import NetMgr from "../../Controller/Net/NetMgr";
 import MeModel from "../../Global/MeModel";
 import SDKMgr from "../../SDK/SDKMgr";
 import RemoteFileLoader from "../../Util/RemoteFileLoader";
+import HallNet from "../HallNet";
 
 const { ccclass, property } = cc._decorator;
 
@@ -37,7 +38,7 @@ export default class ShopSeriesItem extends cc.Component {
             user_id: MeModel.userId,
             rechage_id: this.data.rechageId,
         };
-        NetMgr.httpSend(NetDefine.HTTP_Get.C_Recharge, data, (ret) => {
+        HallNet.C_Recharge(data, (ret) => {
             SDKMgr.ins.onWXPay(ret);
         });
     }

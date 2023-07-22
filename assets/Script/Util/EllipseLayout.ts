@@ -22,7 +22,7 @@ export default class EllipseLayout extends cc.Component {
         this._doLayoutDirty();
     }
 
-    mode: number = 0;
+    mode: number = -1;
 
     setMode(mode) {
         this.mode = mode;
@@ -129,10 +129,14 @@ export default class EllipseLayout extends cc.Component {
 
     dealMode(localIndex, child) {
         if (this.mode == 0) {
-            if (localIndex != 0) {
-                child.scaleX = 0.8;
-                child.scaleY = 0.8;
+            if (localIndex == 0) {
+                child.scaleX = 1.8;
+                child.scaleY = 1.8;
             }
+            // if (localIndex != 0) {
+            //     child.scaleX = 0.8;
+            //     child.scaleY = 0.8;
+            // }
         } else if (this.mode == 1) {
             if (localIndex == 0) {
                 child.scaleX = 1.2;
@@ -141,6 +145,11 @@ export default class EllipseLayout extends cc.Component {
                 child.scaleX = 0.8;
                 child.scaleY = 0.8;
             }
+        } else if (this.mode == 2) {
+            // if (localIndex == 0) {
+            //     child.scaleX = 1.8;
+            //     child.scaleY = 1.8;
+            // }
         }
     }
 

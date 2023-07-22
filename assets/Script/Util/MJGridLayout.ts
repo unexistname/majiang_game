@@ -2,7 +2,6 @@ import { GameConst } from "../Const/GameConst";
 import MahjongCombineItem from "../Mahjong/MahjongCombineItem";
 import MahjongItem from "../Mahjong/MahjongItem";
 import MahjongStraightItem from "../Mahjong/MahjongStraightItem";
-import MJStraightLayout from "./MJStraightLayout";
 
 const { ccclass, property, menu, executeInEditMode, requireComponent } = cc._decorator;
 
@@ -13,8 +12,18 @@ const { ccclass, property, menu, executeInEditMode, requireComponent } = cc._dec
 @executeInEditMode
 export default class MJGridLayout extends cc.Component {
     
+
+    _mahjongNumOneLine: number = 16;
+    
     @property({type: cc.Integer})
-    mahjongNumOneLine: number = 10;
+    set mahjongNumOneLine(val) {
+        this._mahjongNumOneLine = val;
+        this._adjustSize();
+    }
+
+    get mahjongNumOneLine() {
+        return this._mahjongNumOneLine;
+    }
 
     private _sitPos: GameConst.SitPos = GameConst.SitPos.TOP;
 
@@ -83,12 +92,13 @@ export default class MJGridLayout extends cc.Component {
         this._sitPos = val;
 
         let oldReversSort = this._reverseSort;
-        if (val == GameConst.SitPos.DOWN) {
+        if (val == GameConst.SitPos.DOWN || val == GameConst.SitPos.RIGHT) {
             this._reverseSort = true;
         } else {
             this._reverseSort = false;
         }
-        this._adjustSize(this._reverseSort != oldReversSort);
+        this._adjustSize();
+        // this._adjustSize(this._reverseSort != oldReversSort);
     }
 
     _updateLayout(needReverse?: boolean) {
@@ -102,7 +112,7 @@ export default class MJGridLayout extends cc.Component {
             this.node.getComponent(cc.Layout)._doLayout();
             this.node.getComponent(cc.Layout).enabled = false;
             this._adjustOrder();
-        });
+        }, 0);
     }
 
     _adjustSize(needReverse?: boolean) {

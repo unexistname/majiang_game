@@ -66,10 +66,9 @@ export default class RoomView extends cc.Component {
 
     gameView: cc.Node;
 
-    gambers: { [key: string]: any };
+    gambers: { [key: string]: any } = {};
 
     protected start(): void {
-        this.gambers = {};
         UIMgr.createNode(this.prefab_gameover_view, this.node);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.G_AddGamber);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
@@ -83,11 +82,21 @@ export default class RoomView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowDissolve, this.G_ShowDissolve);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_UpdatePermission, this.G_UpdatePermission);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowDissolveVote, this.G_ShowDissolveVote);
         AudioTool.ins.playRoomBGM();        
+    }
+
+    G_ShowDissolveVote() {
+        UIMgr.showView("DissolveVoteView");
     }
 
     updateView(data) {
         this.txt_roomId.string = data.roomId;
+    }
+
+    G_UpdatePermission() {
+        UIMgr.createPrefab("AdminOperateView", this.node);
     }
 
     G_PushRoomInfo(data) {
@@ -101,12 +110,11 @@ export default class RoomView extends cc.Component {
         let node_mode = this.node_modes[mode];
         if (mode == 0) {
             this.node_gambers = node_mode.getChildByName("node_gambers").getComponent(EllipseLayout);
-            this.node_allHolds = node_mode.getChildByName("node_allHolds").getComponent(EllipseLayout);
         } else {
             this.node_gambers = node_mode.getChildByName("node_gambers").getComponent(CustomLayout);
-            this.node_allHolds = node_mode.getChildByName("node_allHolds").getComponent(EllipseLayout);
-            this.node_allHolds.setMode(1);
         }
+        this.node_allHolds = node_mode.getChildByName("node_allHolds").getComponent(EllipseLayout);
+        this.node_allHolds.setMode(mode);
 
         GameUtil.clearChildren(this.node_gambers.node);
         GameUtil.clearChildren(this.node_allHolds.node);
