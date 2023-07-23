@@ -154,7 +154,7 @@ export default class WebSocketUtil extends cc.Component {
         this.receiveHeartBeatPacket("pong");
         this.changeState(NetState.CONNECTED);
 
-        this.wsConn.send(this.getNetType(), {cmd:0, userId: MeModel.userId});
+        this.wsConn.send(this.getNetType(), {cmd:"connect", userId: MeModel.userId});
 
         this.reconnectTime = 0;
         this.onConnectFailCB = null;

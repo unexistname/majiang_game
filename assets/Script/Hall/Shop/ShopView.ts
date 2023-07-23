@@ -16,9 +16,10 @@ export default class ShopView extends cc.Component {
     @property(cc.Node)
     node_shopItems: cc.Node;
 
-    updateView(data: any[]) {
+    updateView(data: any) {
         GameUtil.clearChildren(this.node_shopItems);
-        for (let seriesData of data) {
+        for (let seriesId in data) {
+            let seriesData = data[seriesId];
             UIMgr.createNode(this.prefab_shopItem, this.node_shopItems, ShopSeriesItem, seriesData);
         }
     }

@@ -47,6 +47,7 @@ export default class RoomMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_UserState, this.G_UserState);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DissolveVote, this.G_DissolveVote);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_DissolveResult, this.G_DissolveResult);
     }
 
     generateGamberOrder() {
@@ -94,6 +95,10 @@ export default class RoomMgr {
 
     G_DissolveVote(data) {
         this.dissolveVotes[data.userId] = data;
+    }
+
+    G_DissolveResult(data) {
+        this.dissolveVotes = {};
     }
 
     getDissolveVote() {

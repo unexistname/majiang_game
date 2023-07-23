@@ -30,13 +30,13 @@ export default class ShopSeriesItem extends cc.Component {
         this.txt_seriesName.string = data.seriesName;
         this.txt_seriesDesc.string = data.seriesDesc;
         this.txt_money.string = data.price;
-        UIMgr.setSprite(this.sp_prop, data.seriesImg);
+        UIMgr.setCost(this.sp_prop, data.propId)
     }
 
     CC_onClickShopItem() {
         let data = {
-            user_id: MeModel.userId,
-            rechage_id: this.data.rechageId,
+            userId: MeModel.userId,
+            rechageId: this.data.rechageId,
         };
         HallNet.C_Recharge(data, (ret) => {
             SDKMgr.ins.onWXPay(ret);

@@ -20,6 +20,8 @@ export default class DissolveVoteView extends cc.Component {
     @property(cc.Node)
     node_tips: cc.Node;
 
+    userIds: string[];
+
     protected onLoad(): void {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DissolveVote, this.G_DissolveVote);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DissolveResult, this.G_DissolveResult);
@@ -29,6 +31,7 @@ export default class DissolveVoteView extends cc.Component {
     initView() {
         this.node_ops.active = true;
         this.node_tips.active = false;
+        this.userIds = [];
         GameUtil.clearChildren(this.node_gambers);
 
         let dissolveVotes = RoomMgr.ins.getDissolveVote();
@@ -45,10 +48,14 @@ export default class DissolveVoteView extends cc.Component {
     }
 
     G_DissolveVote(data) {
+        if (this.userIds.indexOf(data.userId) >= 0) {
+            return;
+        }
         let userInfo = RoomMgr.ins.getGamber(data.userId);
         if (userInfo) {
             data.user = userInfo;
             UIMgr.createPrefab("DissolveVoteItem", this.node_gambers, data);
+            this.userIds.push(data.userId);
         }
         if (MeModel.isMe(data.userId)) {
             this.node_ops.active = false;

@@ -87,16 +87,19 @@ export default class MahjongItem extends CardEventHandle {
     }
 
     _updateMahjongSprte() {
-        let child = this.node.children[0];
-        let item = child.getComponent(MahjongUnitItem);
+        let item;
+        for (let child of this.node.children) {
+            item = child.getComponent(MahjongUnitItem);
+            if (item) break;
+        }
         if (!item) {
             return;
         }
         item.setSitPos(this.sitPos);
         let data = { mahjongId: this.mahjongId, showType: this.showType }
         item.updateView(data);
-        this.node.width = child.width;
-        this.node.height = child.height;
+        this.node.width = item.node.width;
+        this.node.height = item.node.height;
         if (!CC_EDITOR) {
             item.showHun(GameMgr.ins.isHun(this.mahjongId));
         } else {

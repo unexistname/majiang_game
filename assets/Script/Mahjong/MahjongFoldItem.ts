@@ -20,7 +20,7 @@ export default class MahjongFoldItem extends cc.Component {
     set mahjongNumOneLine(val) {
         this._mahjongNumOneLine = val;
         let comp = this.node_folds.getComponent(MJGridLayout);
-        comp && (comp.mahjongNumOneLine = val);
+        (comp.mahjongNumOneLine = val);
     }
 
     get mahjongNumOneLine() {
@@ -56,7 +56,7 @@ export default class MahjongFoldItem extends cc.Component {
         if (val == GameConst.SitPos.DOWN || val == GameConst.SitPos.TOP) {
             this.mahjongNumOneLine = 14;
         } else {
-            this.mahjongNumOneLine = 12;
+            this.mahjongNumOneLine = 10;
         }
 
         this.node_folds.getComponent(MJGridLayout).sitPos = val;
@@ -149,9 +149,20 @@ export default class MahjongFoldItem extends cc.Component {
         // let id = i * this.mahjongNumOneLine + j;
         if (id == this._mahjongs.length - 1) {
             this.sp_mark.parent = node;
-            this.sp_mark.setPosition(new cc.Vec2(0, 50));
+            this.sp_mark.setPosition(new cc.Vec2(0, this.getMarkPosY()));
         }
         callback && callback(id, node);
+    }
+
+    getMarkPosY() {
+        switch (this.sitPos) {
+            case GameConst.SitPos.DOWN:
+            case GameConst.SitPos.TOP:
+                return 50;
+            case GameConst.SitPos.LEFT:
+            case GameConst.SitPos.RIGHT:
+                return 20;
+        }
     }
 
     adjustSize() {

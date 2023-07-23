@@ -43,6 +43,7 @@ export default class MJGridLayout extends cc.Component {
             this._updateChildSitPos(child, MahjongStraightItem, val);
             this._updateChildSitPos(child, MahjongCombineItem, val);
         }
+        this._sitPos = val;
         let layout = this.node.getComponent(cc.Layout);
         layout.type = cc.Layout.Type.GRID;
         switch (val) {
@@ -89,7 +90,6 @@ export default class MJGridLayout extends cc.Component {
                 component.right = component.bottom = 0;
                 break;
         }
-        this._sitPos = val;
 
         let oldReversSort = this._reverseSort;
         if (val == GameConst.SitPos.DOWN || val == GameConst.SitPos.RIGHT) {
@@ -120,7 +120,7 @@ export default class MJGridLayout extends cc.Component {
             case GameConst.SitPos.DOWN:
             case GameConst.SitPos.TOP:
                 if (this.node.children.length > 0) {
-                    this.node.width = this.node.children[0].width * this.mahjongNumOneLine;
+                    this.node.width = this.node.children[0].width * this._mahjongNumOneLine;
                     // this.node.height = this.node.children[0].height * Math.ceil(this.node.children.length / this.mahjongNumOneLine);
                 }
                 break;
@@ -128,7 +128,7 @@ export default class MJGridLayout extends cc.Component {
             case GameConst.SitPos.RIGHT:
                 if (this.node.children.length > 0) {
                     // this.node.width = this.node.children[0].width * Math.ceil(this.node.children.length / this.mahjongNumOneLine);
-                    this.node.height = this.node.children[0].height * this.mahjongNumOneLine;
+                    this.node.height = this.node.children[0].height * this._mahjongNumOneLine;
                 }
                 break;
         }
@@ -153,6 +153,7 @@ export default class MJGridLayout extends cc.Component {
         this.sitPos = GameConst.SitPos.DOWN;
         this.node.on(cc.Node.EventType.CHILD_ADDED, this._adjustSize, this);
         this.node.on(cc.Node.EventType.CHILD_REMOVED, this._updateLayout, this);
+        this.node.on(cc.Node.EventType.SIZE_CHANGED, this._updateLayout, this);
         let layout = this.node.getComponent(cc.Layout);
         layout.type = cc.Layout.Type.GRID;
         layout.resizeMode = cc.Layout.ResizeMode.CONTAINER;
@@ -162,6 +163,7 @@ export default class MJGridLayout extends cc.Component {
     protected onDisable(): void {
         this.node.off(cc.Node.EventType.CHILD_ADDED, this._adjustSize, this);
         this.node.off(cc.Node.EventType.CHILD_REMOVED, this._updateLayout, this);
+        this.node.off(cc.Node.EventType.SIZE_CHANGED, this._updateLayout, this);
     }
 
     get sitPos() {
@@ -169,7 +171,7 @@ export default class MJGridLayout extends cc.Component {
     }
 
     getSuitAnchorX() {
-        switch (this.sitPos) {
+        switch (this._sitPos) {
             case GameConst.SitPos.DOWN:
                 return 0.5;
             case GameConst.SitPos.LEFT:
@@ -182,7 +184,7 @@ export default class MJGridLayout extends cc.Component {
     }
     
     getSuitAnchorY() {
-        switch (this.sitPos) {
+        switch (this._sitPos) {
             case GameConst.SitPos.DOWN:
                 return 1;
             case GameConst.SitPos.RIGHT:
