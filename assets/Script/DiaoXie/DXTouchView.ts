@@ -56,6 +56,6 @@ export default class DXTouchView extends cc.Component {
     }
 
     CC_onClickCancel() {
-        UIMgr.closeSelf(this);
+        this.node.active = false;
     }
 }

@@ -36,9 +36,9 @@ export default class ShopSeriesItem extends cc.Component {
     CC_onClickShopItem() {
         let data = {
             userId: MeModel.userId,
-            rechageId: this.data.rechageId,
+            rechargeId: this.data.rechargeId,
         };
-        HallNet.C_Recharge(data, (ret) => {
+        HallNet.C_Pay(data, (ret) => {
             SDKMgr.ins.onWXPay(ret);
         });
     }

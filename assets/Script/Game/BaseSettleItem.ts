@@ -24,8 +24,10 @@ export default class BaseSettleItem extends cc.Component {
     updateView(data) {
         let userId = data.userId;
         let gamber = RoomMgr.ins.getGamber(userId);
-        this.txt_userName.string = GameUtil.cutString(gamber.userName, 10);
-        UIMgr.setAvatar(this.sp_avatar, gamber.avatarUrl);
+        if (gamber) {
+            this.txt_userName.string = GameUtil.cutString(gamber.userName, 10);
+            UIMgr.setAvatar(this.sp_avatar, gamber.avatarUrl);
+        }
         this.node_score.updateScore(data.score);
         this.node_holds.updateHolds(data.holds);
     }

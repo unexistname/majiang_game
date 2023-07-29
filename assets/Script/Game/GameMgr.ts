@@ -100,9 +100,31 @@ export default class GameMgr {
 
     G_LeaveRoom(data) {
         let userId = data.userId;
-        this.holds[userId] = null;
-        this.operates[userId] = null;
-        this.gamberScores[userId] = null;
+        if (MeModel.isMe(userId)) {
+            this.reset();
+        } else {
+            this.holds[userId] = null;
+            this.operates[userId] = null;
+            this.gamberScores[userId] = null;
+            this.penggangs[userId] = null;
+            this.wind[userId] = null;
+            this.drawCard[userId] = null;
+        }
+    }
+
+    reset() {
+        this.bankerId = null;
+        this.huns = [];
+        this.holds = {};
+        this.selectCards = [];
+        this.gamberScores = {};
+        this.fundPool = 0;
+        this.operates = {};
+        this.drawCard = {};
+        this.friendCard = null;
+        this.penggangs = {};
+        this.wind = {};
+        this.turnData = null;
     }
 
     isBettingState() {
@@ -198,7 +220,9 @@ export default class GameMgr {
         this.drawCard = {};
         this.penggangs = {};
         this.operates = {};
-        UIMgr.showView("SettleView", data);
+        if (!data.isReady) {
+            UIMgr.showView("SettleView", data);
+        }
     }
 
     selectCard(pokerId) {

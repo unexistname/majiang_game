@@ -1,6 +1,7 @@
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
 import BaseHoldsItem from "../Game/BaseHoldsItem";
+import GameMgr from "../Game/GameMgr";
 import DXOperate from "./DXOperate";
 
 const { ccclass, property } = cc._decorator;
@@ -13,9 +14,15 @@ export default class DXHoldsItem extends BaseHoldsItem {
 
     protected start(): void {
         super.start();
-        this.txt_op.string = "";
         cc.director.on("rub_card_over", (data) => this.G_SeeCard(data));
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
+        this.initView();
+    }
+
+    initView() {
+        this.txt_op.string = "";
+        let data = GameMgr.ins.getLastOperate(this.userId);
+        data && this.G_DoOperate(data);
     }
 
     protected onDestroy(): void {

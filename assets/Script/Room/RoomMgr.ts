@@ -35,12 +35,15 @@ export default class RoomMgr {
     round: number;
     gameName: GameConst.GameType;
     roundAmount: number;
+    canJoin: boolean = false;
 
     init() {
         GameMgr.ins;
         RoomEncry.ins.register()
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_UpdateRoomOperate, this.G_UpdateRoomOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.updateGamberInfo);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_WatcherToGamber, this.G_WatcherToGamber);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_BeginGame, this.G_BeginGame);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.G_GameSettle);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_LeaveRoom, this.G_LeaveRoom);
@@ -59,10 +62,20 @@ export default class RoomMgr {
             // if (myIndex >= 0) {
                 let mod = this.getSeatNum();
                 let localIndex = (gamber.seatIndex - myIndex + mod) % mod;
-                this.seatIndex[userId] = localIndex;
+                this.seatIndex[userId] = localIndex + (this.canJoin ? 1 : 0);
             // } else {
             //     this.seatIndex[userId] = gamber.seatIndex;
             // }
+        }
+    }
+
+    G_WatcherToGamber(gamber) {
+        if (MeModel.isMe(gamber.userId)) {
+            this.gambers[gamber.userId] = gamber;
+            this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
+            this.generateGamberOrder();
+        } else {
+            this.updateGamberInfo(gamber);
         }
     }
 
@@ -80,7 +93,7 @@ export default class RoomMgr {
         // if (myIndex >= 0) {
             let mod = this.getSeatNum();
             let localIndex = (gamber.seatIndex - myIndex + mod) % mod;
-            this.seatIndex[userId] = localIndex;
+            this.seatIndex[userId] = localIndex + (this.canJoin ? 1 : 0);
         // } else {
         //     this.seatIndex[userId] = gamber.seatIndex + 1;
         // }
@@ -187,6 +200,12 @@ export default class RoomMgr {
         this.gambers = data.gambers;
         this.maxGamberNum = data.gamberAmount;
         this.generateGamberOrder();
+    }
+
+    G_UpdateRoomOperate(data) {
+        if (data.canJoin != null) {
+            this.canJoin = data.canJoin;
+        }
     }
 
     G_UserState(data) {

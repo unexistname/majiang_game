@@ -75,4 +75,12 @@ export default class RoomNet {
         let data = { vote: vote };
         NetMgr.tcpSend(NetDefine.WS_Req.C_DissolveVote, data, UrlModel.gameUrl);
     }
+
+    static C_WatcherToGamber() {
+        NetMgr.tcpSend(NetDefine.WS_Req.C_WatcherToGamber, {}, UrlModel.gameUrl);
+    }
+
+    static C_ShowWatchers() {
+        NetMgr.tcpSend(NetDefine.WS_Req.C_ShowWatchers, {}, UrlModel.gameUrl);
+    }
 }

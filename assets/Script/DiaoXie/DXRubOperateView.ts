@@ -11,7 +11,8 @@ export default class DXRubOperateView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_InitHolds, this.G_InitHolds);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SeeCard, this.hidden);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.hidden);
-        // NetMgr.addListener(this, NetDefine.WS_Resp.G_RubCard, this.hidden);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_RubCard, this.hidden);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_GameSettle, this.hidden);
         cc.director.on("rub_card_over", this.hidden.bind(this));
         this.node.active = false;
     }

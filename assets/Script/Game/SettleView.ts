@@ -23,7 +23,7 @@ export default class SettleView extends cc.Component {
 
     updateView(data) {
         this.node_stop.active = data.forceOver;
-        let isWin = data.settles[MeModel.userId].isWin;
+        let isWin = data.settles[MeModel.userId] && data.settles[MeModel.userId].isWin;
         this.node_win.active = !data.forceOver && isWin;
         this.node_lose.active = !data.forceOver && !isWin;
         let gameType = RoomMgr.ins.getGameType();

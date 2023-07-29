@@ -29,8 +29,8 @@ export default class HallNet {
         NetMgr.tcpSend(NetDefine.WS_Req.C_ShowRecord, {}, UrlModel.hallUrl);
     }
 
-    static C_Recharge(data: any, callback: Function) {
-        NetMgr.httpSend(NetDefine.HTTP_Get.C_Recharge, data, callback, UrlModel.hallUrl);
+    static C_Pay(data: any, callback: Function) {
+        NetMgr.httpSend(NetDefine.HTTP_Get.C_Pay, data, callback, UrlModel.hallUrl);
     }
 
     static C_ShowRecharge(callback: Function) {

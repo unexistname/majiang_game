@@ -18,6 +18,13 @@ export default class RoomEncry extends BaseEncry {
         }
     }
 
+    G_ShowWatchers(msg: any) {
+        for (let watcherId in msg.watchers) {
+            let watcher = msg.watchers[watcherId];
+            watcher.userName = this.decode(watcher.userName);
+        }
+    }
+
     G_GameOver(msg: any) {
         msg.ownerName = this.decode(msg.ownerName);
         let roomConf: any = {};
@@ -48,6 +55,10 @@ export default class RoomEncry extends BaseEncry {
                 data.winTypes = winTypes;
             }
         }
+    }
+    
+    G_GamberInfo(msg: any) {
+        msg.userName = this.decode(msg.userName);
     }
 
     G_AddGamber(msg: any) {

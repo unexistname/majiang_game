@@ -157,8 +157,10 @@ export default class GamberItem extends cc.Component {
         this.node_score_add.runAction(action);
     }
 
-    G_GameSettle() {
+    G_GameSettle(data) {
         this.node_betting.active = false;
+        this.node_choose_banker.active = false;
+        this.node_ready.active = !!data.isReady;
     }
 
     G_GamberScoreChange(data) {

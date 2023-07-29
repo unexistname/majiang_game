@@ -56,6 +56,9 @@ export default class RoomView extends cc.Component {
     @property(cc.Node)
     node_watchers: cc.Node;
 
+    @property(cc.Node)
+    node_sit: cc.Node;
+
     @property(cc.Label)
     txt_roomId: cc.Label;
 
@@ -71,6 +74,7 @@ export default class RoomView extends cc.Component {
     protected start(): void {
         UIMgr.createNode(this.prefab_gameover_view, this.node);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.G_AddGamber);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_WatcherToGamber, this.G_WatcherToGamber);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_UpdateRoomOperate, this.G_UpdateRoomOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_BeginGame, this.G_BeginGame);
@@ -84,7 +88,8 @@ export default class RoomView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_UpdatePermission, this.G_UpdatePermission);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowDissolveVote, this.G_ShowDissolveVote);
-        AudioTool.ins.playRoomBGM();        
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowWatchers, this.G_ShowWatchers);
+        AudioTool.ins.playRoomBGM();
     }
 
     G_ShowDissolveVote() {
@@ -147,6 +152,12 @@ export default class RoomView extends cc.Component {
         }
     }
 
+    G_WatcherToGamber(data) {
+        this.node_gambers.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
+        this.node_allHolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
+        setTimeout(() => this.G_AddGamber(data), 400);
+    }
+
     G_SwapSeat() {
         this.node_gambers.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
         this.node_allHolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
@@ -170,6 +181,7 @@ export default class RoomView extends cc.Component {
         this.node_begin.active = data.canBegin;
         this.node_dissolve.active = data.canDissolve;
         this.node_watchers.active = data.canWatch;
+        this.node_sit.active = data.canJoin;
     }
 
     G_AddGamber(data) {
@@ -461,8 +473,16 @@ export default class RoomView extends cc.Component {
         });
     }
 
+    G_ShowWatchers(data) {
+        UIMgr.showView("WatchersView", data);
+    }
+
     CC_onClickWatchers() {
-        // GameNet.C_ShowWatchers();
+        RoomNet.C_ShowWatchers();
+    }
+
+    CC_onClickSit() {
+        RoomNet.C_WatcherToGamber();
     }
 
     CC_onClickReady() {
