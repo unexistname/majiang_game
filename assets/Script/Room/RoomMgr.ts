@@ -70,13 +70,16 @@ export default class RoomMgr {
     }
 
     G_WatcherToGamber(gamber) {
-        if (MeModel.isMe(gamber.userId)) {
-            this.gambers[gamber.userId] = gamber;
-            this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
-            this.generateGamberOrder();
-        } else {
-            this.updateGamberInfo(gamber);
-        }
+        this.gambers[gamber.userId] = gamber;
+        this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
+        this.generateGamberOrder();
+        // if (MeModel.isMe(gamber.userId)) {
+        //     this.gambers[gamber.userId] = gamber;
+        //     this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
+        //     this.generateGamberOrder();
+        // } else {
+        //     this.updateGamberInfo(gamber);
+        // }
     }
 
     updateGamberInfo(gamber) {

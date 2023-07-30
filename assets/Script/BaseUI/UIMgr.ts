@@ -95,12 +95,17 @@ export default class UIMgr {
 
     static createPrefab(prefabName: string, parent?: cc.Node, data?: any, callback?: Function) {
         let path = ResUtil.getPrefabPath(prefabName);
+        LogUtil.Info("want create prefab. name =", prefabName, ", path =", path);
         cc.loader.loadRes(path, cc.Prefab, (err, prefab) => {
             if (err) {
                 LogUtil.Error(err);
                 callback && callback(err, null);
             } else {
                 let node = this.createNode(prefab, parent);
+                if (node == null) {
+                    LogUtil.Error("instantiate node failed. prefabName = ", prefabName);
+                    return;
+                }
                 if (data) {
                     let component = node.getComponent(prefabName);
                     // @ts-ignore
@@ -114,12 +119,16 @@ export default class UIMgr {
     static createNode(prefab: cc.Node | cc.Prefab, parent?: cc.Node, type?: { prototype: cc.Component }, data?: any) {
         // @ts-ignore
         let node: cc.Node = cc.instantiate(prefab);
+        if (node == null) {
+            LogUtil.Error("instantiate node failed. prefab = ", prefab);
+            return node;
+        }
         if (type && data) {
             let component = node.getComponent(type);
             // @ts-ignore
             component.updateView(data);
         }
-        if (parent) {
+        if (parent && node) {
             parent.addChild(node);
         }
         return node;

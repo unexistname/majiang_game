@@ -132,6 +132,9 @@ export default class EllipseLayout extends cc.Component {
             if (localIndex == 0) {
                 child.scaleX = 1.8;
                 child.scaleY = 1.8;
+            } else {
+                child.scaleX = 1;
+                child.scaleY = 1;
             }
             // if (localIndex != 0) {
             //     child.scaleX = 0.8;
@@ -149,6 +152,9 @@ export default class EllipseLayout extends cc.Component {
             if (localIndex == 0) {
                 child.scaleX = 1.5;
                 child.scaleY = 1.5;
+            } else {
+                child.scaleX = 1;
+                child.scaleY = 1;
             }
         }
     }

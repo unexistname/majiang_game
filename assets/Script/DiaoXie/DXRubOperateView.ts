@@ -1,5 +1,6 @@
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
+import MeModel from "../Global/MeModel";
 import DXNet from "./DXNet";
 
 const { ccclass, property } = cc._decorator;
@@ -25,8 +26,10 @@ export default class DXRubOperateView extends cc.Component {
         this.node.active = false;
     }
 
-    G_InitHolds() {
-        this.node.active = true;
+    G_InitHolds(data) {
+        if (data[MeModel.userId]) {
+            this.node.active = true;
+        }
     }
     
     CC_onClickRubCard() {
