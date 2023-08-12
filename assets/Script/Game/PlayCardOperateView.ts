@@ -14,11 +14,19 @@ export default class PlayCardOperateView extends cc.Component {
     node_play: cc.Node;
 
     @property(cc.Node)
+    node_tip: cc.Node;
+
+    @property(cc.Node)
     node_waive: cc.Node;
 
     protected start(): void {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
-        this.node.active = false;
+        let turnData = GameMgr.ins.getTurnData();
+        if (turnData) {
+            this.G_TurnBetting(turnData);
+        } else {
+            this.node.active = false;
+        }
     }
 
     G_TurnBetting({turnUserId, optionalOperate}) {
@@ -32,11 +40,16 @@ export default class PlayCardOperateView extends cc.Component {
     
     updateOperate(optionalOperate: any) {
         this.node_play.active = !!(optionalOperate & PlayCardOperate.PLAY);
+        this.node_tip.active = !!(optionalOperate & PlayCardOperate.TIP);
         this.node_waive.active = !!(optionalOperate & PlayCardOperate.WAIVE);
     }
 
     CC_onClickPlayCard(event) {
         GameNet.C_PlayCard(GameMgr.ins.getSelectCards());
+    }
+
+    CC_onClickTipCard(event) {
+        GameNet.C_TipCard(GameMgr.ins.getSelectCards());
     }
 
     CC_onClickWaive() {

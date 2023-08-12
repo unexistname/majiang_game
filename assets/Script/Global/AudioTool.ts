@@ -9,6 +9,7 @@ import DZAudioMgr from "../DeZhou/DZAudioMgr";
 import NNAudioMgr from "../NiuNiu/NNAudioMgr";
 import MJAudioMgr from "../Game/MJAudioMgr";
 import PokerAudioMgr from "../Game/PokerAudioMgr";
+import FDAudioMgr from "../FuDing/FDAudioMgr";
 
 export default class AudioTool {
 
@@ -45,6 +46,10 @@ export default class AudioTool {
     playDecideBankerEffect() {
         AudioMgr.ins.playEffect(GameConst.AudioPath.COMMON + "zhuang");
     }
+    
+    playPropEffect(content) {
+        AudioMgr.ins.playEffect(GameConst.AudioPath.PROP + content);
+    }
 
     getAudioMgrByGameName(gameName) {
         switch (gameName) {
@@ -55,7 +60,7 @@ export default class AudioTool {
             case GameConst.GameType.FU_DING_DA_ZHA:
                 return PokerAudioMgr;
             case GameConst.GameType.FU_DING:
-                return MJAudioMgr;
+                return FDAudioMgr;
             case GameConst.GameType.NIU_NIU:
                 return NNAudioMgr;
             case GameConst.GameType.QUE_SHENG:

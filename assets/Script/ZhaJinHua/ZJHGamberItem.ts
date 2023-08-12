@@ -2,7 +2,6 @@ import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
 import GamberItem from "../Gamber/GamberItem";
 import PokerDoOperateItem from "../Game/PokerDoOperateItem";
-import PokerRobItem from "../Game/PokerRobItem";
 import ZJHNet from "./ZJHNet";
 
 const { ccclass, property } = cc._decorator;

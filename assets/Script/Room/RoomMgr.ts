@@ -57,49 +57,28 @@ export default class RoomMgr {
         let myIndex = this.findMySeatIndex(this.gambers);
         this.maxGamberSeatIndex = this.findMaxGamberSeatIndex(this.gambers);
         
+        this.seatIndex = {};
         for (let userId in this.gambers) {
             let gamber = this.gambers[userId];
-            // if (myIndex >= 0) {
-                let mod = this.getSeatNum();
-                let localIndex = (gamber.seatIndex - myIndex + mod) % mod;
-                this.seatIndex[userId] = localIndex + (this.canJoin ? 1 : 0);
-            // } else {
-            //     this.seatIndex[userId] = gamber.seatIndex;
-            // }
+            let mod = this.getSeatNum();
+            let localIndex = (gamber.seatIndex - myIndex + mod) % mod;
+            this.seatIndex[userId] = localIndex + (this.canJoin ? 1 : 0);
         }
     }
 
     G_WatcherToGamber(gamber) {
-        this.gambers[gamber.userId] = gamber;
         this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
+        this.gambers[gamber.userId] = gamber;
         this.generateGamberOrder();
-        // if (MeModel.isMe(gamber.userId)) {
-        //     this.gambers[gamber.userId] = gamber;
-        //     this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
-        //     this.generateGamberOrder();
-        // } else {
-        //     this.updateGamberInfo(gamber);
-        // }
     }
 
     updateGamberInfo(gamber) {
         if (this.gambers[gamber.userId]) {
             return;
         }
+        this.oldSeatIndex = GameUtil.deepClone(this.seatIndex);
         this.gambers[gamber.userId] = gamber;
-        this.maxGamberSeatIndex = Math.max(this.maxGamberSeatIndex, gamber.seatIndex);
-        let userId = gamber.userId;
-        let myIndex = this.seatIndex[MeModel.userId];
-        if (myIndex == null) {
-            myIndex = -1;
-        }
-        // if (myIndex >= 0) {
-            let mod = this.getSeatNum();
-            let localIndex = (gamber.seatIndex - myIndex + mod) % mod;
-            this.seatIndex[userId] = localIndex + (this.canJoin ? 1 : 0);
-        // } else {
-        //     this.seatIndex[userId] = gamber.seatIndex + 1;
-        // }
+        this.generateGamberOrder();
     }
 
     G_SwapSeat(data) {
@@ -188,7 +167,7 @@ export default class RoomMgr {
 
     findMySeatIndex(gambers) {
         for (let userId in gambers) {
-            if (userId == MeModel.userId) {
+            if (MeModel.isMe(userId)) {
                 return gambers[userId].seatIndex;
             }
         }

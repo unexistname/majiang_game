@@ -29,7 +29,7 @@ export default class BettingOperateView extends cc.Component {
             for (let value of data.values) {
                 let node = cc.instantiate(this.node_betting);
                 let label = node.getChildByName("txt_betting").getComponent(cc.Label);
-                label.string = "X" + value;
+                label.string = value + "倍";
                 this.node_bettings.addChild(node);
                 // @ts-ignore
                 node._betting = value;
@@ -49,7 +49,6 @@ export default class BettingOperateView extends cc.Component {
     }
 
     CC_onClickBetting(event) {
-
         let node = event.target;
         if (node._betting != null) {
             GameNet.C_Betting(node._betting);

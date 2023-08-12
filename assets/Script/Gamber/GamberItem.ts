@@ -185,11 +185,11 @@ export default class GamberItem extends cc.Component {
     }
 
     G_EatPoint(data) {
-        if (data.userId == this.userId) {
-            this.node_betting.getChildByName("desc_betting").active = false;
-            this.txt_betting.string = "吃分:" + data.finalPoint;
-            this.node_betting.active = true;
-        }
+        // if (data.userId == this.userId) {
+        //     this.node_betting.getChildByName("desc_betting").active = false;
+        //     this.txt_betting.string = "吃分:" + data.finalPoint;
+        //     this.node_betting.active = true;
+        // }
     }
 
     G_UserState(data) {

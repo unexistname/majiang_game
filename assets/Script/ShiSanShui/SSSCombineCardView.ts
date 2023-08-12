@@ -5,6 +5,8 @@ import PokerItem from "../Game/PokerItem";
 import MeModel from "../Global/MeModel";
 import SSSNet from "./SSSNet";
 import GameUtil from "../Util/GameUtil";
+import UIMgr from "../BaseUI/UIMgr";
+import GameMgr from "../Game/GameMgr";
 
 const { ccclass, property } = cc._decorator;
 
@@ -24,20 +26,46 @@ export default class SSSCombineCardView extends cc.Component {
     @property(cc.Node)
     node_holds: cc.Node;
 
-    combineCardValue: [[], [], []];
+    @property(cc.Node)
+    node_optionals: cc.Node;
+
+    combineCardValue: [number[], number[], number[]];
 
     protected start(): void {
         this.selectCombineCard = [];
         this.combineCardValue = [[], [], []];
+        this.node.active = false;
         NetMgr.addListener(this, NetDefine.WS_Resp.G_InitHolds, this.G_InitHolds);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.G_ShowCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_Combine, this.hidden);
+    }
 
+    show() {
+        GameUtil.clearChildren(this.node_optionals);
+        let data = GameMgr.ins.getOptionalCardData();
+        for (let subData of data) {
+            subData.clickCB = this.onClickOptionalCard.bind(this);
+            UIMgr.createPrefab("SSSCombineCardItem", this.node_optionals, subData);
+        }
+        this.node.active = true;
+    }
+
+    hidden() {
         this.node.active = false;
     }
 
-    G_InitHolds(data) {
+    G_ShowCard() {
+        this.hidden();
         this.clear();
-        let holds = data[MeModel.userId];
-        this.updateHolds(holds);
+    }
+
+    onClickOptionalCard(data) {
+        if (data.special) {
+            SSSNet.C_UseSpecial(data.special);
+            this.node.active = false;
+        } else {
+            this.setCombineCards(data.combineCards);
+        }
     }
 
     clear() {
@@ -46,9 +74,6 @@ export default class SSSCombineCardView extends cc.Component {
         let item = this.node_holds.getComponent(PokerSelectHoldsItem);
         if (item) {
             item.forceClear();
-        }
-        for (let pier of this.piers) {
-            GameUtil.clearChildren(pier);
         }
     }
 
@@ -63,6 +88,24 @@ export default class SSSCombineCardView extends cc.Component {
                 child.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
                 child.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
             }
+        }
+    }
+
+    G_InitHolds() {
+        let holds = GameMgr.ins.getMyHolds();
+        this.setCombineCards([holds.slice(0, 3), holds.slice(3, 8), holds.slice(8)]);
+    }
+
+    setCombineCards(cards: number[][]) {
+        this.clear();
+        for (let i = 0; i < 3; ++i) {
+            this.combineCardValue[i] = GameUtil.deepClone(cards[i]);
+            this.piers[i].getComponent(PokerSelectHoldsItem).updateHolds(cards[i], (index, child) => {
+                child.on(cc.Node.EventType.TOUCH_START, this.onTouchDown, this);
+                child.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
+                child.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+                child.on(cc.Node.EventType.TOUCH_CANCEL, this.onTouchCancel, this);
+            });
         }
     }
 

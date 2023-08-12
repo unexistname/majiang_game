@@ -44,7 +44,11 @@ export default class GameMgr {
 
     wind: { [key: string]: number } = {};
 
+    pokerFolds: { [key: string]: any } = {};
+
     turnData: any = null;
+
+    optionalCardData: any = null;
 
     init() {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Hun, this.G_Hun);
@@ -62,6 +66,8 @@ export default class GameMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_FriendCard, this.G_FriendCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DecideWind, this.G_DecideWind);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_OptionalCard, this.G_OptionalCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_PokerFold, this.G_PokerFold);
         // NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
     }
 
@@ -109,10 +115,12 @@ export default class GameMgr {
             this.penggangs[userId] = null;
             this.wind[userId] = null;
             this.drawCard[userId] = null;
+            this.pokerFolds[userId] = null;
         }
     }
 
     reset() {
+        this.gameState = GameConst.GameState.IDLE;
         this.bankerId = null;
         this.huns = [];
         this.holds = {};
@@ -124,6 +132,7 @@ export default class GameMgr {
         this.friendCard = null;
         this.penggangs = {};
         this.wind = {};
+        this.pokerFolds = {};
         this.turnData = null;
     }
 
@@ -199,6 +208,22 @@ export default class GameMgr {
         this.bankerId = data.bankerId;
     }
 
+    G_OptionalCard(data) {
+        this.optionalCardData = data;
+    }
+
+    G_PokerFold(data) {
+        this.pokerFolds[data.userId] = data;
+    }
+
+    getPokerFoldsByUserId(userId) {
+        return this.pokerFolds[userId];
+    }
+
+    getOptionalCardData() {
+        return this.optionalCardData;
+    }
+
     getHoldsByUserId(userId) {
         return GameUtil.deepClone(this.holds[userId]) || [];
     }
@@ -220,6 +245,7 @@ export default class GameMgr {
         this.drawCard = {};
         this.penggangs = {};
         this.operates = {};
+        this.pokerFolds = {};
         if (!data.isReady) {
             UIMgr.showView("SettleView", data);
         }

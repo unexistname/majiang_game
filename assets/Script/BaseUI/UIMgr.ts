@@ -19,6 +19,7 @@ export default class UIMgr {
         if (unique && parent.getChildByName(viewName)) {
             return;
         }
+        
         let path = ResUtil.getPrefabPath(viewName);
         cc.loader.loadRes(path, cc.Prefab, (err, prefab) => {
             if (err) {
@@ -119,6 +120,7 @@ export default class UIMgr {
     static createNode(prefab: cc.Node | cc.Prefab, parent?: cc.Node, type?: { prototype: cc.Component }, data?: any) {
         // @ts-ignore
         let node: cc.Node = cc.instantiate(prefab);
+        LogUtil.Info("want create prefab. name =", prefab.name, ", parent=", parent && parent.name);
         if (node == null) {
             LogUtil.Error("instantiate node failed. prefab = ", prefab);
             return node;
@@ -128,10 +130,14 @@ export default class UIMgr {
             // @ts-ignore
             component.updateView(data);
         }
-        if (parent && node) {
+        if (cc.isValid(parent)) {
             parent.addChild(node);
         }
         return node;
+    }
+
+    static createPokerNode(pokerId: number, parent?: cc.Node, callback?: Function) {
+        this.createPrefab("PokerItem", parent, pokerId, callback);
     }
 
     static createSpriteNode(path: string, parent: cc.Node, callback?: Function) {

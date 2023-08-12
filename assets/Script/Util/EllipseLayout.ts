@@ -102,24 +102,26 @@ export default class EllipseLayout extends cc.Component {
                 let localIndex = this.findLocalIndex(child, i);
                 let angle = (360 / activeChildCount * localIndex) - 90;
                 let pos = this.getEllipsePos(angle);
+                child.stopAllActions();
+                this.dealMode(localIndex, child);
                 if (showAnim) {
                     child.runAction(cc.moveTo(0.3, pos));
                 } else {
                     child.setPosition(pos);
                 }
-                this.dealMode(localIndex, child);
             }
         }
     }
 
     updateSeatIndex(oldSeatIndex, newSeatIndex) {
         let tmpSeatNodes = {};
-        for (let localIndex in this.seatNodes) {
-            for (let userId in oldSeatIndex) {
-                if (oldSeatIndex[userId] == localIndex) {
-                    let newLocalIndex = newSeatIndex[userId];
-                    tmpSeatNodes[newLocalIndex] = this.seatNodes[localIndex];
-                    break;
+        for (let userId in oldSeatIndex) {
+            let localIndex = oldSeatIndex[userId];
+            let node = this.seatNodes[localIndex];
+            for (let newUserId in newSeatIndex) {
+                if (userId == newUserId) {
+                    let newLocalIndex = newSeatIndex[newUserId];
+                    tmpSeatNodes[newLocalIndex] = node;
                 }
             }
         }
@@ -142,16 +144,16 @@ export default class EllipseLayout extends cc.Component {
             // }
         } else if (this.mode == 1) {
             if (localIndex == 0) {
-                child.scaleX = 1.2;
-                child.scaleY = 1.2;
+                child.scaleX = 1.5;
+                child.scaleY = 1.5;
             } else {
                 child.scaleX = 0.8;
                 child.scaleY = 0.8;
             }
         } else if (this.mode == 2) {
             if (localIndex == 0) {
-                child.scaleX = 1.5;
-                child.scaleY = 1.5;
+                child.scaleX = 1.8;
+                child.scaleY = 1.8;
             } else {
                 child.scaleX = 1;
                 child.scaleY = 1;
@@ -163,7 +165,7 @@ export default class EllipseLayout extends cc.Component {
         if (!CC_EDITOR) {
             for (let localIndex in this.seatNodes) {
                 if (this.seatNodes[localIndex] == child) {
-                    return localIndex;
+                    return Number(localIndex);
                 }
             }
         }

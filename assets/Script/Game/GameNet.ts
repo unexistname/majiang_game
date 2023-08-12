@@ -24,6 +24,24 @@ export default class GameNet {
         let data = { cards: cards };
         NetMgr.tcpSend(NetDefine.WS_Req.C_PlayCard, data, UrlModel.gameUrl);
     }
+
+    static C_TipCard(cards: number[]) {
+        let data = { cards: cards };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_TipCard, data, UrlModel.gameUrl);
+    }
+    
+    static C_SortCard() {
+        NetMgr.tcpSend(NetDefine.WS_Req.C_SortCard, {}, UrlModel.gameUrl);
+    }
+
+    static C_RestoreCard() {
+        NetMgr.tcpSend(NetDefine.WS_Req.C_RestoreCard, {}, UrlModel.gameUrl);
+    }
+
+    static C_ArrangeCard(cards: number[]) {
+        let data = { cards: cards };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_ArrangeCard, data, UrlModel.gameUrl);
+    }
     
     static C_Waive() {
         NetMgr.tcpSend(NetDefine.WS_Req.C_Waive, {}, UrlModel.gameUrl);

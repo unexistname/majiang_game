@@ -6,6 +6,7 @@ import GameUtil from "../Util/GameUtil";
 import RoomMgr from "../Room/RoomMgr";
 import EllipseLayout from "../Util/EllipseLayout";
 import PokerFoldItem from "../Game/PokerFoldItem";
+import PokerPointCardItem from "../Game/PokerPointCardItem";
 
 const { ccclass, property } = cc._decorator;
 
@@ -24,19 +25,41 @@ export default class FDDZGameView extends cc.Component {
     @property(cc.Prefab)
     prefab_folds: cc.Prefab;
 
+    @property(cc.Prefab)
+    prefab_pointCards: cc.Prefab;
+
+    @property(cc.Node)
+    node_foldCards: cc.Node;
+
+    @property(EllipseLayout)
+    node_allPointCards: EllipseLayout;
+
     @property(PokerItem)
     item_friendCard: PokerItem;
+
+    @property(cc.Label)
+    txt_foldPoint: cc.Label;
 
     protected start(): void {
         this.initView();
         NetMgr.addListener(this, NetDefine.WS_Resp.G_BeginGame, this.G_BeginGame);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_FriendCard, this.G_FriendCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_SwapSeat, this.G_SwapSeat);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_FoldPointCard, this.G_FoldPointCard);
     }
 
     initView() {
         this.node_friendCard.active = false;
         UIMgr.createNode(this.prefab_operate_view, this.node);
+        UIMgr.createPrefab("PlayCardSortOperateView", this.node);
+    }
+
+    G_FoldPointCard({ point, cards }) {
+        GameUtil.clearChildren(this.node_foldCards);
+        for (let card of cards) {
+            UIMgr.createPokerNode(card, this.node_foldCards);
+        }
+        this.txt_foldPoint.string = "" + point;
     }
 
     G_FriendCard(data) {
@@ -46,6 +69,7 @@ export default class FDDZGameView extends cc.Component {
 
     G_SwapSeat() {
         this.node_allFolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
+        // this.node_allPointCards.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
     }
     
     G_BeginGame() {
@@ -56,5 +80,13 @@ export default class FDDZGameView extends cc.Component {
             this.node_allFolds.addChild(node, localIndex);
             node.getComponent(PokerFoldItem).setUserId(userId);
         }
+
+        // GameUtil.clearChildren(this.node_allPointCards.node);
+        // for (let userId of RoomMgr.ins.getGamberIds()) {
+        //     let node = UIMgr.createNode(this.prefab_pointCards);
+        //     let localIndex = RoomMgr.ins.getLocalSeatIndex(userId);
+        //     this.node_allPointCards.addChild(node, localIndex);
+        //     node.getComponent(PokerPointCardItem).setUserId(userId);
+        // }
     }
 }

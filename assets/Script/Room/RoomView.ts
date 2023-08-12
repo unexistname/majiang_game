@@ -7,6 +7,7 @@ import AudioTool from "../Global/AudioTool";
 import MeModel from "../Global/MeModel";
 import EllipseLayout from "../Util/EllipseLayout";
 import GameUtil from "../Util/GameUtil";
+import TimerTask from "../Util/TimerTask";
 import CustomLayout from "./CustomLayout";
 import RoomMgr from "./RoomMgr";
 import RoomNet from "./RoomNet";
@@ -71,8 +72,19 @@ export default class RoomView extends cc.Component {
 
     gambers: { [key: string]: any } = {};
 
+    interval: number = 0;
+
+    addGamberTimerTask: TimerTask;
+
     protected start(): void {
+        this.initNetListener();
         UIMgr.createNode(this.prefab_gameover_view, this.node);
+        this.addGamberTimerTask = new TimerTask();
+        AudioTool.ins.playRoomBGM();
+        this.updateNowTime();
+    }
+
+    initNetListener() {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_AddGamber, this.G_AddGamber);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_WatcherToGamber, this.G_WatcherToGamber);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
@@ -89,7 +101,6 @@ export default class RoomView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_UpdatePermission, this.G_UpdatePermission);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowDissolveVote, this.G_ShowDissolveVote);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowWatchers, this.G_ShowWatchers);
-        AudioTool.ins.playRoomBGM();
     }
 
     G_ShowDissolveVote() {
@@ -127,7 +138,7 @@ export default class RoomView extends cc.Component {
         
         for (let gamberId in data.gambers) {
             let gamber = data.gambers[gamberId];
-            this.G_AddGamber(gamber);
+            this.addGamber(gamber);
         }
 
         let gameViewName = this.getGameViewName(data.gameName);
@@ -155,7 +166,8 @@ export default class RoomView extends cc.Component {
     G_WatcherToGamber(data) {
         this.node_gambers.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
         this.node_allHolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
-        setTimeout(() => this.G_AddGamber(data), 400);
+        this.addGamberTimerTask.doTask();
+        this.addGamberTimerTask.beginTask(() => this.addGamber(data), 0.4);
     }
 
     G_SwapSeat() {
@@ -185,6 +197,13 @@ export default class RoomView extends cc.Component {
     }
 
     G_AddGamber(data) {
+        this.node_gambers.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
+        this.node_allHolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
+        this.addGamberTimerTask.doTask();
+        this.addGamberTimerTask.beginTask(() => this.addGamber(data), 0.4);
+    }
+
+    addGamber(data) {
         if (this.gambers[data.userId]) {
             return;
         }
@@ -266,28 +285,18 @@ export default class RoomView extends cc.Component {
         // }
     }
 
-    getComberItemByNode(node: cc.Node) {
-        return node.getComponent(this.getGamberItemComponentName());
-    }
-
-    getGamberItemComponentName() {
-        return this.prefab_gamber.name;
-    }
-
     private getGamberItemName(gameName) {
         switch (gameName) {
             case GameConst.GameType.DIAO_XIE:
-                return "BettingGamberItem";
             case GameConst.GameType.DE_ZHOU:
                 return "BettingGamberItem";
-            // case GameConst.GameType.FU_DING_DA_ZHA:
-            //     return "FDDZGameView";
+            case GameConst.GameType.FU_DING_DA_ZHA:
+                return "FDDZGamberItem";
             // case GameConst.GameType.FU_DING:
             //     return "FDGameView";
-            case GameConst.GameType.NIU_NIU:
-                return "RobGamberItem";
             // case GameConst.GameType.QUE_SHENG:
             //     return "QSGameView";
+            case GameConst.GameType.NIU_NIU:
             case GameConst.GameType.SAN_GONG:
                 return "RobGamberItem";
             // case GameConst.GameType.SHI_SAN_SHUI:
@@ -449,7 +458,7 @@ export default class RoomView extends cc.Component {
     }
 
     playAnim(prop, parent) {
-        // cc.vv.audioMgr.playSFX(content + ".mp3","chat");
+        AudioTool.ins.playPropEffect(prop.propName);
 
         cc.loader.loadRes(prop.anim, cc.AnimationClip, function(err, clip) {
             if( err ){
@@ -457,9 +466,9 @@ export default class RoomView extends cc.Component {
                 return;
             }
             if( clip ){
-                var node = new cc.Node();
+                let node = new cc.Node();
                 node.addComponent(cc.Sprite);
-                var anim = node.addComponent(cc.Animation);
+                let anim = node.addComponent(cc.Animation);
 
                 anim.addClip(clip);
                 anim.defaultClip = clip;
@@ -499,6 +508,29 @@ export default class RoomView extends cc.Component {
 
     CC_onClickExit() {
         RoomNet.C_LeaveRoom();
-        // HallMgr.ins.goToHall();
+    }
+
+    CC_onClickSetting() {
+        UIMgr.showView("SettingView");
+    }
+
+    update(dt) {
+        this.interval += dt;
+        if(this.interval >= 1){
+            this.interval -= 1;
+            this.updateNowTime();
+        }
+    }
+
+    updateNowTime() {
+        let date = new Date();
+        let h = date.getHours();
+        let hour = h < 10? ("0"+h):h;
+        
+        let m = date.getMinutes();
+        let minute = m < 10? ("0"+m):m;
+        let s = date.getSeconds();
+        let gap = s%2==0 ? " " : ":";
+        this.txt_time.string = "" + hour + gap + minute;
     }
 }   

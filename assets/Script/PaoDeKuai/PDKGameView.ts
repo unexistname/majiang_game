@@ -4,8 +4,8 @@ import UIMgr from "../BaseUI/UIMgr";
 import EllipseLayout from "../Util/EllipseLayout";
 import GameUtil from "../Util/GameUtil";
 import RoomMgr from "../Room/RoomMgr";
-import PDKHoldsItem from "./PDKHoldsItem";
 import PokerFoldItem from "../Game/PokerFoldItem";
+import GameMgr from "../Game/GameMgr";
 
 const { ccclass, property } = cc._decorator;
 
@@ -21,13 +21,15 @@ export default class PDKGameView extends cc.Component {
     @property(cc.Prefab)
     prefab_folds: cc.Prefab;
 
-    protected start(): void {
+    protected onLoad(): void {
         this.initView();
         NetMgr.addListener(this, NetDefine.WS_Resp.G_BeginGame, this.G_BeginGame);
     }
 
     initView() {
         UIMgr.createNode(this.prefab_operate_view, this.node);
+        UIMgr.createPrefab("PlayCardSortOperateView", this.node);
+        GameMgr.ins.isBettingState() && this.G_BeginGame();
     }
     
     G_BeginGame() {

@@ -8,4 +8,9 @@ export default class SSSNet {
         let data = {cards: cards};
         NetMgr.tcpSend(NetDefine.WS_Req.C_Combine, data, UrlModel.gameUrl);
     }
+
+    static C_UseSpecial(cardType: number) {
+        let data = {cardType: cardType};
+        NetMgr.tcpSend(NetDefine.WS_Req.C_UseSpecial, data, UrlModel.gameUrl);
+    }
 }

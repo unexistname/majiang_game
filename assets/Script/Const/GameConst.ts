@@ -84,6 +84,12 @@ export namespace GameConst {
         THREE_BELT_PAIR,
         THREE_STRAIGHT_BELT_ONE,
         THREE_STRAIGHT_BELT_PAIR,
+        FOUR_BELT_TWO,
+        FOUR_BELT_TWO_PAIR,
+        FOUR_STRAIGHT_BELT_MULTI_SINGLE,
+        FOUR_STRAIGHT_BELT_MULTI_PAIR,
+        FOUR_BELT_PAIR,
+        FOUR_STRAIGHT_BELT_PAIR,
         BOMB,
     }
 
@@ -138,6 +144,7 @@ export namespace GameConst {
         static PAO_DE_KUAI = "resources/sounds/paodekuai/";
         static MAHJONG = "resources/sounds/majiang/";
         static POKER = "resources/sounds/poker/";
+        static PROP = "resources/sounds/prop/";
     }
     
     // export const SitPos = cc.Enum({

@@ -63,6 +63,14 @@ export default class CardEventHandle extends cc.Component {
                     LogUtil.Error(`[执行"${key}"对应的方法失败], ${e}`);
                 }
             }
+        } else if (this._burial[key]) {
+            for (let func of this._burial[key]) {
+                try {
+                    func(...args);
+                } catch (e) {
+                    LogUtil.Error(`[执行"${key}"对应的方法失败], ${e}`);
+                }
+            }
         }
     }
 

@@ -35,4 +35,18 @@ export default class PokerItem extends CardEventHandle {
         console.log("点击了手牌", this.pokerId);
         this.emit("click_card", this.pokerId, this.node, this);
     }
+
+    setClickEnable(enabled: boolean) {
+        let comp = this.node.getComponent(cc.Button);
+        if (comp) {
+            comp.enabled = enabled;
+        }
+    }
+
+    register(key: any, func: any): void {
+        super.register(key, func);
+        if (key == "click_card") {
+            this.setClickEnable(true);
+        }
+    }
 }

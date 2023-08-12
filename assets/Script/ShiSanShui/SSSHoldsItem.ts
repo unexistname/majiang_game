@@ -11,17 +11,11 @@ export default class SSSHoldsItem extends BaseHoldsItem {
     @property(cc.Node)
     node_combines: cc.Node;
 
-    item_combines: PokerHoldsItem[];
+    @property({type: [PokerHoldsItem]})
+    item_combines: PokerHoldsItem[] = [];
 
     protected start(): void {
         super.start();
-        this.item_combines = [];
-        for (let child of this.node_combines.children) {
-            let item = child.getComponent(PokerHoldsItem);
-            if (item) {
-                this.item_combines.push(item);
-            }
-        }
         NetMgr.addListener(this, NetDefine.WS_Resp.G_BeginGame, this.G_BeginGame);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_Combine, this.G_Combine);
     }
@@ -33,9 +27,16 @@ export default class SSSHoldsItem extends BaseHoldsItem {
 
     G_ShowCard(data) {
         let cardData = data[this.userId];
-        if (cardData) {
+        if (!cardData) {
+            return;
+        }
+        if (cardData.useSpecial) {
+            this.scheduleOnce(() => {
+                this.updateCombines(cardData.combineCards, true);
+            }, 4);
+        } else {
             if (cardData.combineCards) {
-                this.updateCombines(cardData.combineCards);
+                this.updateCombines(cardData.combineCards, true);
             } else if (cardData.holds) {
                 this.updateHolds(cardData.holds);
             }
@@ -48,11 +49,17 @@ export default class SSSHoldsItem extends BaseHoldsItem {
         }
     }
 
-    updateCombines(combineCards) {
+    updateCombines(combineCards, showAnim = false) {
         this.node_combines.active = true;
         for (let i = 0; i < combineCards.length; ++i) {
             let holds = combineCards[i];
-            this.item_combines[i].updateHolds(holds);
+            if (showAnim) {
+                this.scheduleOnce(() => {
+                    this.item_combines[i].updateHolds(holds);
+                }, i * 1.5);
+            } else {
+                this.item_combines[i].updateHolds(holds);
+            }
         }
         this.item_pokers.node.active = false;
     }
