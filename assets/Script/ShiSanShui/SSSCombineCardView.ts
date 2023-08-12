@@ -2,7 +2,6 @@ import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
 import PokerSelectHoldsItem from "../Game/PokerSelectHoldsItem";
 import PokerItem from "../Game/PokerItem";
-import MeModel from "../Global/MeModel";
 import SSSNet from "./SSSNet";
 import GameUtil from "../Util/GameUtil";
 import UIMgr from "../BaseUI/UIMgr";
@@ -43,9 +42,13 @@ export default class SSSCombineCardView extends cc.Component {
     show() {
         GameUtil.clearChildren(this.node_optionals);
         let data = GameMgr.ins.getOptionalCardData();
-        for (let subData of data) {
-            subData.clickCB = this.onClickOptionalCard.bind(this);
-            UIMgr.createPrefab("SSSCombineCardItem", this.node_optionals, subData);
+        if (data) {
+            for (let subData of data) {
+                subData.clickCB = this.onClickOptionalCard.bind(this);
+                UIMgr.createPrefab("SSSCombineCardItem", this.node_optionals, subData);
+            }
+        } else {
+            this.updateHolds(GameMgr.ins.getMyHolds());
         }
         this.node.active = true;
     }

@@ -16,6 +16,8 @@ export default class PokerItem extends CardEventHandle {
 
     pokerId = null;
 
+    holdIndex = null;
+
     setPoker(pokerId) {
         this.updateView(pokerId);
     }

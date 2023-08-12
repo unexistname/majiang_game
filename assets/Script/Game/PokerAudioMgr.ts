@@ -11,6 +11,9 @@ export default class PokerAudioMgr extends cc.Component {
     }
 
     G_PokerFold(data) {
+        if (data.isSync) {
+            return;
+        }
         let path = this.getPokerCardTypeAudioPath(data.cardType, data.folds);
         AudioMgr.ins.playEffect(path);
     }

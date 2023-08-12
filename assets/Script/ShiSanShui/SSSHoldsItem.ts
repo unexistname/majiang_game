@@ -11,6 +11,12 @@ export default class SSSHoldsItem extends BaseHoldsItem {
     @property(cc.Node)
     node_combines: cc.Node;
 
+    @property(cc.Node)
+    node_pokers: cc.Node;
+
+    @property(cc.Label)
+    txt_leftCard: cc.Label;
+
     @property({type: [PokerHoldsItem]})
     item_combines: PokerHoldsItem[] = [];
 
@@ -22,7 +28,7 @@ export default class SSSHoldsItem extends BaseHoldsItem {
 
     G_BeginGame() {
         this.node_combines.active = false;
-        this.item_pokers.node.active = true;
+        this.node_pokers.active = true;
     }
 
     G_ShowCard(data) {
@@ -50,7 +56,7 @@ export default class SSSHoldsItem extends BaseHoldsItem {
     }
 
     updateCombines(combineCards, showAnim = false) {
-        this.node_combines.active = true;
+        this.node_pokers.active = false;
         for (let i = 0; i < combineCards.length; ++i) {
             let holds = combineCards[i];
             if (showAnim) {
@@ -61,12 +67,19 @@ export default class SSSHoldsItem extends BaseHoldsItem {
                 this.item_combines[i].updateHolds(holds);
             }
         }
-        this.item_pokers.node.active = false;
+        this.node_combines.active = true;
     }
 
     updateHolds(holds) {
-        this.item_pokers.node.active = true;
-        this.item_pokers.updateHolds(holds);
         this.node_combines.active = false;
+        if (holds.length > 0 && holds[0] == -1) {
+            this.txt_leftCard.string = holds.length + "";
+            this.txt_leftCard.node.active = true;
+            holds = [-1];
+        } else {
+            this.txt_leftCard.node.active = false;
+        }
+        this.item_pokers.updateHolds(holds);
+        this.node_pokers.active = true;
     }
 }

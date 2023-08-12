@@ -19,7 +19,6 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
 
     protected start(): void {
         super.start();
-        // NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DoOperate, this.G_DoOperate);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TipCard, this.G_TipCard);
     }
@@ -27,7 +26,6 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
     setUserId(userId: string): void {
         super.setUserId(userId);
         if (MeModel.isMe(userId)) {
-            // this.register("click_card", this.Slot_ClickPoker.bind(this));
             this.item_pokers.useDragMode();
             this.register("select_multi_card", this.Slot_SelectMultiPoker.bind(this));
             this.register("select_multi_card_over", this.Slot_SelectMultiPokerOver.bind(this));
@@ -41,26 +39,20 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
 
     Slot_ClickPoker(pokerId, node) {
         let index = this.clickNodes.indexOf(node);
+        let holdIndex = node.getComponent(PokerItem).holdIndex;
         if (index >= 0) {
             this.clickNodes.splice(index, 1);
-            GameMgr.ins.cancelSelectCard(pokerId);
+            GameMgr.ins.cancelSelectCard(holdIndex);
             this.selectOrCancelSelect(node, false);
         } else {
-            GameMgr.ins.selectCard(pokerId);
+            GameMgr.ins.selectCard(holdIndex);
             this.clickNodes.push(node);
             this.selectOrCancelSelect(node, true);
         }
     }
 
-    Slot_SelectMultiPoker(pokerIds, dragNodes) {
+    Slot_SelectMultiPoker(indexs, dragNodes) {
         this.clearDragSelect();
-        // for (let node of dragNodes) {
-        //     // if (this.clickNodes.indexOf(node)) {
-        //     //     this.selectOrCancelSelect(node, false);
-        //     // } else {
-        //         this.selectOrCancelSelect(node, true);
-        //     // }
-        // }
         let isCancel = this.isOnlyCancel(dragNodes);
         for (let node of dragNodes) {
             this.selectOrCancelSelect(node, !isCancel);
@@ -79,55 +71,30 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
 
     clearDragSelect() {
         for (let node of this.dragNodes) {
-            // if (this.clickNodes.indexOf(node) == -1) {
-                this.selectOrCancelSelect(node, false);
-            // }
+            this.selectOrCancelSelect(node, false);
         }
         for (let node of this.clickNodes) {
             this.selectOrCancelSelect(node, true);
         }
     }
 
-    Slot_SelectMultiPokerOver(pokerIds, dragNodes) {
+    Slot_SelectMultiPokerOver(indexs, dragNodes) {
         this.clearDragSelect();
-        // if (dragNodes.length == 1) {
-        //     let node = dragNodes[0];
-        //     let pokerId = node.getComponent(PokerItem).pokerId;
-        //     if (this.clickNodes.indexOf(node) != -1) {
-        //         let index = this.clickNodes.indexOf(node);
-        //         this.clickNodes.splice(index, 1);
-        //         GameMgr.ins.cancelSelectCard(pokerId);
-        //         this.selectOrCancelSelect(node, false);
-        //     } else {
-        //         GameMgr.ins.selectCard(pokerId);
-        //         this.clickNodes.push(node);
-        //         this.selectOrCancelSelect(node, true);
-        //     }
-        // } else {
-        //     for (let node of dragNodes) {
-        //         let pokerId = node.getComponent(PokerItem).pokerId;
-        //         if (this.clickNodes.indexOf(node) == -1) {
-        //             GameMgr.ins.selectCard(pokerId);
-        //             this.clickNodes.push(node);
-        //             this.selectOrCancelSelect(node, true);
-        //         }
-        //     }
-        // }
         if (this.isOnlyCancel(dragNodes)) {
             for (let node of dragNodes) {
-                let pokerId = node.getComponent(PokerItem).pokerId;
+                let holdIndex = node.getComponent(PokerItem).holdIndex;
                 if (this.clickNodes.indexOf(node) != -1) {
                     let index = this.clickNodes.indexOf(node);
                     this.clickNodes.splice(index, 1);
-                    GameMgr.ins.cancelSelectCard(pokerId);
+                    GameMgr.ins.cancelSelectCard(holdIndex);
                 }
                 this.selectOrCancelSelect(node, false);
             }
         } else {
             for (let node of dragNodes) {
-                let pokerId = node.getComponent(PokerItem).pokerId;
+                let holdIndex = node.getComponent(PokerItem).holdIndex;
                 if (this.clickNodes.indexOf(node) == -1) {
-                    GameMgr.ins.selectCard(pokerId);
+                    GameMgr.ins.selectCard(holdIndex);
                     this.clickNodes.push(node);
                 }
                 this.selectOrCancelSelect(node, true);

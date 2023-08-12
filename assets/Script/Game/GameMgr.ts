@@ -251,12 +251,12 @@ export default class GameMgr {
         }
     }
 
-    selectCard(pokerId) {
-        this.selectCards.push(pokerId);
+    selectCard(holdIndex) {
+        this.selectCards.push(holdIndex);
     }
 
-    cancelSelectCard(pokerId) {
-        let index = this.selectCards.indexOf(pokerId);
+    cancelSelectCard(holdIndex) {
+        let index = this.selectCards.indexOf(holdIndex);
         if (index >= 0) {
             this.selectCards.splice(index, 1);
         }

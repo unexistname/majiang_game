@@ -20,6 +20,7 @@ export default class PlayCardOperateView extends cc.Component {
     node_waive: cc.Node;
 
     protected start(): void {
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCard, this.G_ShowCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_TurnBetting, this.G_TurnBetting);
         let turnData = GameMgr.ins.getTurnData();
         if (turnData) {
@@ -27,6 +28,10 @@ export default class PlayCardOperateView extends cc.Component {
         } else {
             this.node.active = false;
         }
+    }
+
+    G_ShowCard() {
+        this.node.active = false;
     }
 
     G_TurnBetting({turnUserId, optionalOperate}) {

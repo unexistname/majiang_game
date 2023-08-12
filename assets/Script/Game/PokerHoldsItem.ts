@@ -37,11 +37,8 @@ export default class PokerHoldsItem extends CardEventHandle {
         let movePos = event.getLocation();
         let endNode = this.getPokerNodeByPos(movePos);
         let dragNodes = this.getNodesByRange(this.beginNode, endNode);
-        let pokerIds = [];
-        for (let holdNode of dragNodes) {
-            pokerIds.push(holdNode.getComponent(PokerItem).pokerId);
-        }
-        this.emit("select_multi_card", pokerIds, dragNodes);
+        let indexs = this.getIndexsByRange(this.beginNode, endNode);
+        this.emit("select_multi_card", indexs, dragNodes);
     }
 
     onTouchEnd(event) {
@@ -51,11 +48,8 @@ export default class PokerHoldsItem extends CardEventHandle {
         let endPos = event.getLocation();
         let endNode = this.getPokerNodeByPos(endPos);
         let dragNodes = this.getNodesByRange(this.beginNode, endNode);
-        let pokerIds = [];
-        for (let holdNode of dragNodes) {
-            pokerIds.push(holdNode.getComponent(PokerItem).pokerId);
-        }
-        this.emit("select_multi_card_over", pokerIds, dragNodes);
+        let indexs = this.getIndexsByRange(this.beginNode, endNode);
+        this.emit("select_multi_card_over", indexs, dragNodes);
         this.beginNode = null;
     }
 
@@ -109,6 +103,30 @@ export default class PokerHoldsItem extends CardEventHandle {
         return [];
     }
 
+    private getIndexsByRange(node, endNode) {
+        if (!node || !endNode) {
+            return [];
+        }
+        let hasBegin = 0;
+        let indexs = [];
+        for (let i = 0; i < this.holdNodes.length; ++i) {
+            let holdNode = this.holdNodes[i];
+            if (holdNode == node) {
+                hasBegin++;
+            }
+            if (holdNode == endNode) {
+                hasBegin++;
+            }
+            if (hasBegin) {
+                indexs.push(i);
+                if (hasBegin >= 2) {
+                    return indexs;
+                }
+            }
+        }
+        return [];
+    }
+
     getCardNodes(cards) {
         let res = [];
         let pokerIds = GameUtil.deepClone(cards);
@@ -134,12 +152,11 @@ export default class PokerHoldsItem extends CardEventHandle {
             } else {
                 this.holdNodes[i].getComponent(PokerItem).updateView(pokerId);
             }
+            this.holdNodes[i].getComponent(PokerItem).holdIndex = i;
             this.holdNodes[i].active = true;
         }
         for (let i = holds.length; i < this.holds.length; ++i) {
             if (this.holdNodes[i]) {
-                // this.holdNodes[i].parent = null;
-                // this.holdNodes[i] = null;
                 this.holdNodes[i].active = false;
             }
         }
