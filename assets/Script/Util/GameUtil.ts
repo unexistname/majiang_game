@@ -41,6 +41,15 @@ export default class GameUtil {
         }
     }
 
+    static mergeDict(dictA: any, dictB: any) {
+        if (dictB == null) {
+            return dictA;
+        } else if (dictA == null) {
+            return dictB;
+        }
+        return Object.assign({}, dictA, dictB);
+    }
+
     static isMahjongGame() {
         let gameType = RoomMgr.ins.getGameType();
         switch (gameType) {

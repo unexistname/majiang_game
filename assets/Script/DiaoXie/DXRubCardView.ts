@@ -72,6 +72,7 @@ export default class DXRubCardView extends cc.Component {
         this.data = data;
         this.updateView(data.holds);
         this.node_back.setPosition(new cc.Vec2(0, 0));
+        this.node_back.opacity = 255;
         this.node.active = true;
     }
 
@@ -85,29 +86,43 @@ export default class DXRubCardView extends cc.Component {
         this.node_back.x = targetX;
         this.node_back.y = targetY;
 
-        if (this.canRubOver(targetX, targetY)) {
-            let pos = this.getRubEndPos(targetX, targetY);
-            this.canTouch = false;
-            this.node_back.runAction(cc.sequence(
-                cc.moveBy(0.3, pos),
-                cc.delayTime(0.5),
-                cc.callFunc(() => {
-                    this.canTouch = true;
-                    this.rubCardOver();
-                }),
-            ));
-        }
+        // if (this.canRubOver(targetX, targetY)) {
+        //     let pos = this.getRubEndPos(targetX, targetY);
+        //     this.canTouch = false;
+        //     this.node_back.runAction(cc.sequence(
+        //         cc.moveBy(0.3, pos),
+        //         cc.delayTime(0.5),
+        //         cc.callFunc(() => {
+        //             this.canTouch = true;
+        //             this.rubCardOver();
+        //         }),
+        //     ));
+        // }
     }
 
-    onTouchEnd() {
+    onTouchEnd(event) {
         if (!this.canTouch) {
             return;
         }
+        // let movePos = event.getLocation();
+        // let targetX = movePos.x - this.startPos.x + this.backPos.x;
+        // let targetY = movePos.y - this.startPos.y + this.backPos.y;
+        // let pos = this.getRubEndPos(targetX, targetY);
+        this.canTouch = false;
+        this.node_back.runAction(cc.sequence(
+            cc.fadeOut(0.3),
+            cc.delayTime(0.5),
+            cc.callFunc(() => {
+                this.canTouch = true;
+                this.rubCardOver();
+            }),
+        ));
+
         this.startPos = null;
     }
 
-    onTouchCancel() {
-        this.onTouchEnd();
+    onTouchCancel(event) {
+        this.onTouchEnd(event);
     }
 
     canRubOver(posX: number, posY: number) {

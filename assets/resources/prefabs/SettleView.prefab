@@ -1035,7 +1035,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        203.292,
+        209.581,
         0,
         0,
         0,
@@ -1137,7 +1137,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 800,
-      "height": 400
+      "height": 415
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1149,7 +1149,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -9.753,
+        -5.371,
         0,
         0,
         0,
@@ -1208,7 +1208,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 800,
-      "height": 400
+      "height": 415
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1220,7 +1220,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        200,
+        207.5,
         0,
         0,
         0,
@@ -1526,7 +1526,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -241.327,
+        -243.518,
         0,
         0,
         0,

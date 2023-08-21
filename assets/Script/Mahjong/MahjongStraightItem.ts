@@ -78,9 +78,11 @@ export default class MahjongStraightItem extends CardEventHandle {
                 mahjongItems[i].active = true;
             }
         }
-        for (let i = mahjongs.length; i < mahjongItems.length; ++i) {
+        for (let i = mahjongItems.length - 1; i >= mahjongs.length; --i) {
             if (mahjongItems[i]) {
                 mahjongItems[i].active = false;
+                // mahjongItems[i].parent = null;
+                // mahjongItems.splice(i);
             }
         }
     }

@@ -39,11 +39,6 @@ export default class ResUtil {
         return "textures/purchase/item110";
     }
 
-    static getAudioPath(gameType: string, audioName: string, sex?: number) {
-        let basePath = "resources/sounds/";
-        
-    }
-
     static getAvatar(sex?: number) {
         if (sex != null) {
             return "textures/icon/"+ (sex ? "head_man" : "head_girl");
@@ -77,7 +72,7 @@ export default class ResUtil {
         } else {
             let decor = pokerId % 10;
             let value = this.getPokerValue(pokerId);
-            if (decor == 5) {
+            if (this.isGhost(pokerId)) {
                 return
             } else if (decor % 2 == 1) {
                 return "textures/pokerBig/black_" + value;
@@ -85,6 +80,11 @@ export default class ResUtil {
                 return "textures/pokerBig/red_" + value;
             }
         }
+    }
+
+    static isGhost(pokerId) {
+        let decor = pokerId % 10;
+        return decor > 4;
     }
 
     static getPokerValue(pokerId) {

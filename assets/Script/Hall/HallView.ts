@@ -33,7 +33,25 @@ export default class HallView extends cc.Component {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_EnterHall, this.G_EnterHall);
         // NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowCreateRoom, this.G_ShowCreateRoom);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_ShowRecord, this.G_ShowRecord);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_TransferGem, this.G_TransferGem);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_UpdateGem, this.G_UpdateGem);
         AudioTool.ins.playHallBGM();
+    }
+    
+    G_TransferGem(data) {
+        if (MeModel.isMe(data.userId)) {
+            UIMgr.showTip(`转让${data.gem}钻石成功`);
+        } else if (MeModel.isMe(data.userId2)) {
+            UIMgr.showTip(`${data.userId}向你转让了${data.gem}钻石`);
+        } else {
+            
+        }
+    }
+
+    G_UpdateGem(data) {
+        if (MeModel.isMe(data.userId)) {
+            this.txt_gem.string = "" + data.gem;
+        }
     }
 
     CC_onClickEnterHall() {
@@ -81,5 +99,9 @@ export default class HallView extends cc.Component {
 
     CC_onClickSetting() {
         UIMgr.showView("SettingView");
+    }
+
+    CC_onClickTransfer() {
+        UIMgr.showView("TransferGemView");
     }
 }

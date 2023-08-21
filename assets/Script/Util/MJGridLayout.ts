@@ -13,7 +13,7 @@ const { ccclass, property, menu, executeInEditMode, requireComponent } = cc._dec
 export default class MJGridLayout extends cc.Component {
     
 
-    _mahjongNumOneLine: number = 16;
+    _mahjongNumOneLine: number = 10;
     
     @property({type: cc.Integer})
     set mahjongNumOneLine(val) {
@@ -120,7 +120,7 @@ export default class MJGridLayout extends cc.Component {
             case GameConst.SitPos.DOWN:
             case GameConst.SitPos.TOP:
                 if (this.node.children.length > 0) {
-                    this.node.width = this.node.children[0].width * this._mahjongNumOneLine;
+                    this.node.width = this.node.children[0].width * this._mahjongNumOneLine * this.node.children[0].scale;
                     // this.node.height = this.node.children[0].height * Math.ceil(this.node.children.length / this.mahjongNumOneLine);
                 }
                 break;
@@ -128,7 +128,7 @@ export default class MJGridLayout extends cc.Component {
             case GameConst.SitPos.RIGHT:
                 if (this.node.children.length > 0) {
                     // this.node.width = this.node.children[0].width * Math.ceil(this.node.children.length / this.mahjongNumOneLine);
-                    this.node.height = this.node.children[0].height * this._mahjongNumOneLine;
+                    this.node.height = this.node.children[0].height * this._mahjongNumOneLine * this.node.children[0].scale;
                 }
                 break;
         }

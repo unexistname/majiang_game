@@ -174,7 +174,7 @@
       "array": [
         0,
         0,
-        275.6559018819856,
+        340.4342847969016,
         0,
         0,
         0,
@@ -1444,7 +1444,7 @@
         1,
         1,
         1,
-        0
+        1
       ]
     },
     "_eulerAngles": {
@@ -1671,7 +1671,7 @@
     },
     "component": "",
     "_componentId": "acf77QpRBVPuZBYnJqTbvUk",
-    "handler": "CC_onClickShop",
+    "handler": "CC_onClickTransfer",
     "customEventData": ""
   },
   {

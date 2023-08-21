@@ -15,18 +15,18 @@
     "default"
   ],
   "start-scene": "a8ced277-d4a3-41ef-aac0-e1b6f31cd8cb",
-  "design-resolution-width": 960,
-  "design-resolution-height": 640,
+  "design-resolution-width": 750,
+  "design-resolution-height": 1334,
   "fit-width": false,
   "fit-height": true,
   "use-project-simulator-setting": true,
   "simulator-orientation": true,
   "use-customize-simulator": false,
   "simulator-resolution": {
-    "height": 1136,
-    "width": 640
+    "height": 1334,
+    "width": 750
   },
-  "last-module-event-record-time": 1691483282633,
+  "last-module-event-record-time": 1692621475895,
   "assets-sort-type": "name",
   "facebook": {
     "appID": "",

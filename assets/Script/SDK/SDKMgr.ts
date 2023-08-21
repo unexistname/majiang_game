@@ -64,8 +64,9 @@ export default class SDKMgr {
             // @ts-ignore
             city = jsb.reflection.callStaticMethod(this.IOS_API, "getCity");
         } else {
-            longitude = 20 + Math.random();
-            latitude = 30 + Math.random();
+            longitude = -1;
+            latitude = -1;
+            city = "";
             console.log("platform:" + cc.sys.os + " dosn't implement onUploadLocation.");
         }
         console.log("经度", longitude);

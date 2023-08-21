@@ -14,7 +14,7 @@ export default class MahjongFoldItem extends cc.Component {
 
     _mahjongs: Array<number> = [];
 
-    _mahjongNumOneLine: number = 16;
+    _mahjongNumOneLine: number = 10;
     
     @property({type: cc.Integer})
     set mahjongNumOneLine(val) {
@@ -54,7 +54,7 @@ export default class MahjongFoldItem extends cc.Component {
         // }
         this._sitPos = val;
         if (val == GameConst.SitPos.DOWN || val == GameConst.SitPos.TOP) {
-            this.mahjongNumOneLine = 14;
+            this.mahjongNumOneLine = 18;
         } else {
             this.mahjongNumOneLine = 10;
         }

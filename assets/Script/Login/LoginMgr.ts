@@ -6,6 +6,7 @@ import LogUtil from "../Util/LogUtil";
 import LoginModel from "./LoginModel";
 import LoginNet from "./LoginNet";
 import HallMgr from "../Hall/HallMgr";
+import HallNet from "../Hall/HallNet";
 
 
 export default class LoginMgr {
@@ -146,6 +147,9 @@ export default class LoginMgr {
         // if(ret.area != null)MeModel.area = ret.area;
 
         UrlModel.hallUrl = server.url;
+
+        let location = SDKMgr.ins.getLocation();
+        HallNet.C_UpdateLocation(MeModel.userId, location);
 
         ret.reconnectRoomId ? HallMgr.ins.enterRoom(ret.reconnectRoomId) : HallMgr.ins.goToHall();
     }

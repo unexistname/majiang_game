@@ -46,7 +46,7 @@ static VoiceManager* voiceManager = [VoiceManager shareInstance];
 
 Application* app = nullptr;
 NSString* kAppId = @"wx02b8313157685a8f";
-NSString* kUniversalLinks = @"https://majiang.autoeco.com.cn/";
+NSString* kUniversalLinks = @"https://universal.ningdemajiang.cn/";
 
 @synthesize window;
 

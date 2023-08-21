@@ -1,6 +1,7 @@
 import { NetDefine } from "../Const/NetDefine";
 import NetMgr from "../Controller/Net/NetMgr";
 import UrlModel from "../Global/UrlModel";
+import GameUtil from "../Util/GameUtil";
 
 export default class HallNet {
 
@@ -35,5 +36,15 @@ export default class HallNet {
 
     static C_ShowRecharge(callback: Function) {
         NetMgr.httpSend(NetDefine.HTTP_Get.C_ShowRecharge, {}, callback, UrlModel.hallUrl);
+    }
+
+    static C_TransferGem(userId: string, gemNum: number) {
+        let data = { userId: userId, gemNum: gemNum };
+        NetMgr.tcpSend(NetDefine.WS_Req.C_TransferGem, data, UrlModel.hallUrl);
+    }
+
+    static C_UpdateLocation(userId: string, location: any) {
+        let data = {userId: userId, location: location};
+        NetMgr.httpSend(NetDefine.HTTP_Get.C_UpdateLocation, data, null, UrlModel.hallUrl);
     }
 }

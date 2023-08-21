@@ -109,8 +109,8 @@ export default class MJStraightLayout extends cc.Layout {
                     child.setPosition(new cc.Vec2(0, child.position.y));
                 }
                 if (this.node.children.length > 0) {
-                    this.node.width = this.node.children[0].width;
-                    this.node.height = this.node.children[0].height * this.node.children.length;
+                    this.node.width = this.node.children[0].width * this.node.children[0].scale;
+                    this.node.height = this.node.children[0].height * this.node.children.length * this.node.children[0].scale;
                 }
                 break;
             case GameConst.SitPos.DOWN:
@@ -119,8 +119,8 @@ export default class MJStraightLayout extends cc.Layout {
                     child.setPosition(new cc.Vec2(child.position.x, 0));
                 }
                 if (this.node.children.length > 0) {
-                    this.node.width = this.node.children[0].width * this.node.children.length;
-                    this.node.height = this.node.children[0].height;
+                    this.node.width = this.node.children[0].width * this.node.children.length * this.node.children[0].scale;
+                    this.node.height = this.node.children[0].height * this.node.children[0].scale;
                 }
                 break;
         }
