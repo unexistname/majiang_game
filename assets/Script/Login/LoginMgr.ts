@@ -106,8 +106,10 @@ export default class LoginMgr {
             this.isLoadingServer = false;
             LoginModel.ins.servers = ret.servers;
             LoginModel.ins.recommend = ret.recommend;
+            LoginModel.ins.debug = !!ret.debug;
+            cc.director.emit("can_guest_login", LoginModel.ins.debug);
 
-            console.log("[LoginMgr updateServerList]", ret);
+            LogUtil.Log("[LoginMgr updateServerList]", ret);
             // 默认选择第一个服
             let defaultServer = LoginModel.ins.getRecommendServer();
             this.updateAddress(defaultServer.index);
@@ -116,7 +118,7 @@ export default class LoginMgr {
 
     updateAddress(selectServerIndex: number) {
         LoginNet.C_GetAddress(selectServerIndex, (ret) => {
-            console.log("[LoginMgr updateAddress]", ret);
+            LogUtil.Log("[LoginMgr updateAddress]", ret);
             LoginModel.ins.selectServerIndex = ret.index;
             LoginModel.ins.selectServerToken = ret.token;
             UrlModel.loginUrl = ret.url;

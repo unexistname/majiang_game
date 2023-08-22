@@ -17,6 +17,7 @@ export default class LoginModel {
     servers: any[] = [];
     selectServerIndex: number;
     selectServerToken: string;
+    debug: boolean = false;
 
     getRecommendServer() {
         for (let server of this.servers) {

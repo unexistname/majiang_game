@@ -212,7 +212,7 @@ export namespace GameConst {
 
     export class Config {
 
-        static IS_DEBUG = true;
+        static IS_DEBUG = false;
         static NET_HEART_BEAT_INTERVAL = 6000;   // 心跳包时间
         static NET_HEART_BEAT_TIMEOUT = 6000 * 5;   // 心跳包超时时间
         static ROOM_ID_LENGTH = 6;

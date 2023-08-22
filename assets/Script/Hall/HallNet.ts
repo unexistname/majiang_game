@@ -44,7 +44,8 @@ export default class HallNet {
     }
 
     static C_UpdateLocation(userId: string, location: any) {
-        let data = {userId: userId, location: location};
+        let data = { userId: userId };
+        data = GameUtil.mergeDict(data, location);
         NetMgr.httpSend(NetDefine.HTTP_Get.C_UpdateLocation, data, null, UrlModel.hallUrl);
     }
 }

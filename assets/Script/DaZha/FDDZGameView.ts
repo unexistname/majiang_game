@@ -7,6 +7,7 @@ import RoomMgr from "../Room/RoomMgr";
 import EllipseLayout from "../Util/EllipseLayout";
 import PokerFoldItem from "../Game/PokerFoldItem";
 import PokerPointCardItem from "../Game/PokerPointCardItem";
+import GameMgr from "../Game/GameMgr";
 
 const { ccclass, property } = cc._decorator;
 
@@ -52,6 +53,10 @@ export default class FDDZGameView extends cc.Component {
         this.node_friendCard.active = false;
         UIMgr.createNode(this.prefab_operate_view, this.node);
         UIMgr.createPrefab("PlayCardSortOperateView", this.node);
+        
+        let foldData = GameMgr.ins.getFoldPointCard();
+        foldData && this.G_FoldPointCard(foldData);
+        GameMgr.ins.isBettingState() && this.G_BeginGame();
     }
 
     G_FoldPointCard({ point, cards }) {
@@ -80,13 +85,5 @@ export default class FDDZGameView extends cc.Component {
             this.node_allFolds.addChild(node, localIndex);
             node.getComponent(PokerFoldItem).setUserId(userId);
         }
-
-        // GameUtil.clearChildren(this.node_allPointCards.node);
-        // for (let userId of RoomMgr.ins.getGamberIds()) {
-        //     let node = UIMgr.createNode(this.prefab_pointCards);
-        //     let localIndex = RoomMgr.ins.getLocalSeatIndex(userId);
-        //     this.node_allPointCards.addChild(node, localIndex);
-        //     node.getComponent(PokerPointCardItem).setUserId(userId);
-        // }
     }
 }

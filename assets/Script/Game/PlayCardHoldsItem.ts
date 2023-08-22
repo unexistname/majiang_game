@@ -137,10 +137,15 @@ export default class PlayCardHoldsItem extends BaseHoldsItem {
 
     G_TipCard(data) {
         if (MeModel.isMe(data.userId)) {
-            this.clearSelect();
+            for (let node of this.clickNodes) {
+                this.selectOrCancelSelect(node, false);
+            }
+            this.clickNodes = [];
+            
             let cardNodes = this.item_pokers.getCardNodes(data.cards);
             for (let node of cardNodes) {
                 this.selectOrCancelSelect(node, true);
+                this.clickNodes.push(node);
             }
         }
     }

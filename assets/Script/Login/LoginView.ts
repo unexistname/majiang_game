@@ -12,9 +12,21 @@ export default class LoginView extends cc.Component {
     node_guest: cc.Node;
 
     onLoad() {
-        this.node_guest.active = !!GameConst.Config.IS_DEBUG;
+        this.node_guest.active = false;
         LoginMgr.ins.updateServerList();
         AudioTool.ins.playLoginBGM();
+    }
+
+    protected onEnable(): void {
+        cc.director.on("can_guest_login", this.updateGuestLogin, this);        
+    }
+
+    protected onDestroy(): void {
+        cc.director.off("can_guest_login", this.updateGuestLogin, this);
+    }
+
+    updateGuestLogin(show: boolean) {
+        this.node_guest.active = show;
     }
 
     CC_onClickGuest() {

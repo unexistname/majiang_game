@@ -48,6 +48,8 @@ export default class GameMgr {
 
     turnData: any = null;
 
+    foldPointCard: any = null;
+
     optionalCardData: any = null;
 
     init() {
@@ -68,6 +70,8 @@ export default class GameMgr {
         NetMgr.addListener(this, NetDefine.WS_Resp.G_DecideWind, this.G_DecideWind);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_OptionalCard, this.G_OptionalCard);
         NetMgr.addListener(this, NetDefine.WS_Resp.G_PokerFold, this.G_PokerFold);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_FoldPointCard, this.G_FoldPointCard);
+        NetMgr.addListener(this, NetDefine.WS_Resp.G_TipCard, this.G_TipCard);
         // NetMgr.addListener(this, NetDefine.WS_Resp.G_PushRoomInfo, this.G_PushRoomInfo);
     }
 
@@ -77,6 +81,14 @@ export default class GameMgr {
 
     getFriendCard() {
         return this.friendCard;
+    }
+
+    G_FoldPointCard(data) {
+        this.foldPointCard = data;
+    }
+
+    getFoldPointCard() {
+        return this.foldPointCard;
     }
 
     G_PushRoomInfo() {
@@ -260,6 +272,10 @@ export default class GameMgr {
         if (index >= 0) {
             this.selectCards.splice(index, 1);
         }
+    }
+
+    G_TipCard(data) {
+        this.selectCards = data.tipIndexs;
     }
 
     getSelectCards() {

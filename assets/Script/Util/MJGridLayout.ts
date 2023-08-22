@@ -91,28 +91,19 @@ export default class MJGridLayout extends cc.Component {
                 break;
         }
 
-        let oldReversSort = this._reverseSort;
         if (val == GameConst.SitPos.DOWN || val == GameConst.SitPos.RIGHT) {
             this._reverseSort = true;
         } else {
             this._reverseSort = false;
         }
         this._adjustSize();
-        // this._adjustSize(this._reverseSort != oldReversSort);
     }
 
     _updateLayout(needReverse?: boolean) {
-        for (let i = 0, len = this.node.children.length; i < len; ++i) {
-            let child = this.node.children[i];
-            child.zIndex = 0;
-        }
-
-        this.scheduleOnce(() => {
-            // @ts-ignore
-            this.node.getComponent(cc.Layout)._doLayout();
-            this.node.getComponent(cc.Layout).enabled = false;
-            this._adjustOrder();
-        }, 0);
+        // @ts-ignore
+        this.node.getComponent(cc.Layout)._doLayout();
+        this.node.getComponent(cc.Layout).enabled = false;
+        this._adjustOrder();
     }
 
     _adjustSize(needReverse?: boolean) {
@@ -132,7 +123,9 @@ export default class MJGridLayout extends cc.Component {
                 }
                 break;
         }
-        this._updateLayout(needReverse);
+        this.scheduleOnce(() => {
+            this._updateLayout(needReverse);
+        }, 0);
     }
 
     _adjustOrder(needReverse?: boolean) {
@@ -149,9 +142,19 @@ export default class MJGridLayout extends cc.Component {
         }
     }
 
+    _onChildAdd(node: cc.Node) {
+        if (this._reverseSort) {
+            for (let i = 0, len = this.node.children.length; i < len; ++i) {
+                let child = this.node.children[i];
+                child.zIndex = 0;
+            }
+        }
+        this._adjustSize();
+    }
+
     protected onEnable(): void {
         this.sitPos = GameConst.SitPos.DOWN;
-        this.node.on(cc.Node.EventType.CHILD_ADDED, this._adjustSize, this);
+        this.node.on(cc.Node.EventType.CHILD_ADDED, this._onChildAdd, this);
         this.node.on(cc.Node.EventType.CHILD_REMOVED, this._updateLayout, this);
         this.node.on(cc.Node.EventType.SIZE_CHANGED, this._updateLayout, this);
         let layout = this.node.getComponent(cc.Layout);
@@ -161,7 +164,7 @@ export default class MJGridLayout extends cc.Component {
     }
 
     protected onDisable(): void {
-        this.node.off(cc.Node.EventType.CHILD_ADDED, this._adjustSize, this);
+        this.node.off(cc.Node.EventType.CHILD_ADDED, this._onChildAdd, this);
         this.node.off(cc.Node.EventType.CHILD_REMOVED, this._updateLayout, this);
         this.node.off(cc.Node.EventType.SIZE_CHANGED, this._updateLayout, this);
     }
@@ -186,11 +189,11 @@ export default class MJGridLayout extends cc.Component {
     getSuitAnchorY() {
         switch (this._sitPos) {
             case GameConst.SitPos.DOWN:
-                return 1;
+                return 0;
             case GameConst.SitPos.RIGHT:
                 return 0.5;
             case GameConst.SitPos.TOP:
-                return 0;
+                return 1;
             case GameConst.SitPos.LEFT:
                 return 0.5;
         }

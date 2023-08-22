@@ -6,6 +6,7 @@ import RoomMgr from "../Room/RoomMgr";
 import UIMgr from "../BaseUI/UIMgr";
 import { GameConst } from "../Const/GameConst";
 import MJFoldItem from "../Mahjong/MJFoldItem";
+import GameMgr from "../Game/GameMgr";
 
 const { ccclass, property } = cc._decorator;
 
@@ -60,6 +61,7 @@ export default class FDGameView extends cc.Component {
         this.node_baseHu.active = false;
         this.node_leftCard.active = false;
         this.node_hun.active = false;
+        GameMgr.ins.isBettingState() && this.G_BeginGame();
     }
 
     G_Hun(data) {
@@ -78,7 +80,7 @@ export default class FDGameView extends cc.Component {
         this.txt_baseHu.string = data.baseHu;
     }
     
-    G_BeginGame(data) {        
+    G_BeginGame() {        
         GameUtil.clearChildren(this.node_allFolds.node);
         for (let userId of RoomMgr.ins.getGamberIds()) {
             let node = UIMgr.createNode(this.prefab_folds);
