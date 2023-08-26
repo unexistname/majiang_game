@@ -65,6 +65,9 @@ export enum ErrorCode {
     JSON_PARSE_ERROR,
     HTTP_REQUEST_TIMEOUT,
     HTTP_REQUEST_ERROR,
+
+    UNSELECT_REPLACE_CARD,
+    REPLACE_CARD_FAIL,
 }
 
 let errorMsg: any = {};
@@ -133,5 +136,8 @@ errorMsg[ErrorCode.REQUEST_SERVER_ADDRESS_ERROR] = "获取服务器地址失败"
 errorMsg[ErrorCode.JSON_PARSE_ERROR] = "数据解析出错";
 errorMsg[ErrorCode.HTTP_REQUEST_TIMEOUT] = "连接服务器超时";
 errorMsg[ErrorCode.HTTP_REQUEST_ERROR] = "请求服务器出错";
+
+errorMsg[ErrorCode.UNSELECT_REPLACE_CARD] = "未选择要换的牌";
+errorMsg[ErrorCode.REPLACE_CARD_FAIL] = "换牌失败，请刷新重试";
 
 export let ErrorMsg = errorMsg;

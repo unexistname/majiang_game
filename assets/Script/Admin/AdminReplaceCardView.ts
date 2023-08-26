@@ -27,6 +27,10 @@ export default class AdminReplaceCardView extends CardEventHandle {
 
     item_selectHeap: any;
 
+    selectHoldIndex: number;
+
+    selectHeapIndex: number;
+
     protected onLoad(): void {
         NetMgr.addListener(this, NetDefine.WS_Resp.GA_ReplaceCard, this.GA_ReplaceCard);
         this.node_heapCards.getComponent(CardEventHandle).register("click_card", this.Slot_ClickHeap.bind(this));
@@ -40,6 +44,7 @@ export default class AdminReplaceCardView extends CardEventHandle {
         component.showSelect(true);
         this.item_selectHold = component;
         this.selectHold = cardId;
+        this.selectHoldIndex = this.node_myCards.children.indexOf(node);
     }
 
     Slot_ClickHeap(cardId, node, component) {
@@ -49,10 +54,12 @@ export default class AdminReplaceCardView extends CardEventHandle {
         component.showSelect(true);
         this.item_selectHeap = component;
         this.selectHeap = cardId;
+        this.selectHeapIndex = this.node_heapCards.children.indexOf(node);
     }
 
     GA_ReplaceCard(data) {
         this.selectHold = this.selectHeap = null;
+        this.selectHeapIndex = this.selectHeapIndex = -1;
         if (this.item_selectHold) {
             this.item_selectHold.showSelect(false);
             this.item_selectHold = null;
@@ -111,7 +118,7 @@ export default class AdminReplaceCardView extends CardEventHandle {
         } else if (this.selectHeap == null) {
             UIMgr.showTip("请选择要替换的牌");
         } else {
-            GameNet.CA_ReplaceCard(this.selectHold, this.selectHeap);
+            GameNet.CA_ReplaceCard(this.selectHoldIndex, this.selectHold, this.selectHeapIndex, this.selectHeap);
         }
     }
 

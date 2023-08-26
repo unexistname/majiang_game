@@ -39,5 +39,6 @@ export default class CommonConfItem extends cc.Component {
     CC_onSelectConf(event) {
         let label = event.target.getChildByName("txt_confValue").getComponent(cc.Label);
         this.value = label.string;
+        cc.director.emit("change_room_conf", this.getSelectData()[0]);
     }
 }

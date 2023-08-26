@@ -146,6 +146,7 @@ export default class GameMgr {
         this.wind = {};
         this.pokerFolds = {};
         this.turnData = null;
+        this.foldPointCard = null;
     }
 
     isBettingState() {

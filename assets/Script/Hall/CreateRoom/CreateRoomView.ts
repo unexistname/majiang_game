@@ -36,6 +36,13 @@ export default class CreateRoomView extends cc.Component {
 
     confIndex: number;
 
+    protected onEnable(): void {
+        cc.director.on("change_room_conf", this.Slot_RoomConfChange, this);
+    }
+    protected onDisable(): void {
+        cc.director.off("change_room_conf", this.Slot_RoomConfChange, this);
+    }
+
     updateView(roomConfs: any[]) {
         GameUtil.clearChildren(this.node_gameTypes);
         this.roomConfs = roomConfs;
@@ -57,7 +64,7 @@ export default class CreateRoomView extends cc.Component {
         let costNum = roomConf.costNum;
         if (costType != null && costNum) {
             UIMgr.setCost(this.sp_costType, costType);
-            this.txt_costType.string = "X" + costNum + "/人/局";
+            this.txt_costType.string = "X" + costNum + "/人";
             this.sp_costType.node.parent.active = true;
         } else {
             this.sp_costType.node.parent.active = false;
@@ -90,5 +97,18 @@ export default class CreateRoomView extends cc.Component {
 
     CC_onClickClose() {
         UIMgr.closeSelf(this);
+    }
+
+    Slot_RoomConfChange({ name, value}) {
+        if (name == "局数") {
+            let roomConf = this.roomConfs[this.confIndex];
+            let costType = roomConf.costType;
+            let costNum = roomConf.costNum * value / 8;
+            if (costType != null && costNum) {
+                UIMgr.setCost(this.sp_costType, costType);
+                this.txt_costType.string = "X" + costNum + "/人";
+                this.sp_costType.node.parent.active = true;
+            }
+        }
     }
 }

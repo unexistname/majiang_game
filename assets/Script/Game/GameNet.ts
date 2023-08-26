@@ -55,8 +55,8 @@ export default class GameNet {
         NetMgr.tcpSend(NetDefine.WS_Req.CA_ShowReplaceCard, {}, UrlModel.gameUrl);
     }
 
-    static CA_ReplaceCard(myCard: number, heapCard: number) {
-        let data = { myCard: myCard, heapCard: heapCard };
+    static CA_ReplaceCard(myCardIndex: number, myCard: number, heapCardIndex: number, heapCard: number) {
+        let data = { myCardIndex: myCardIndex, myCard: myCard, heapCardIndex: heapCardIndex, heapCard: heapCard };
         NetMgr.tcpSend(NetDefine.WS_Req.CA_ReplaceCard, data, UrlModel.gameUrl);
     }
 }

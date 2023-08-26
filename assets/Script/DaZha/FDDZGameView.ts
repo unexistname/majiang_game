@@ -6,7 +6,6 @@ import GameUtil from "../Util/GameUtil";
 import RoomMgr from "../Room/RoomMgr";
 import EllipseLayout from "../Util/EllipseLayout";
 import PokerFoldItem from "../Game/PokerFoldItem";
-import PokerPointCardItem from "../Game/PokerPointCardItem";
 import GameMgr from "../Game/GameMgr";
 
 const { ccclass, property } = cc._decorator;
@@ -31,9 +30,6 @@ export default class FDDZGameView extends cc.Component {
 
     @property(cc.Node)
     node_foldCards: cc.Node;
-
-    @property(EllipseLayout)
-    node_allPointCards: EllipseLayout;
 
     @property(PokerItem)
     item_friendCard: PokerItem;
@@ -74,7 +70,6 @@ export default class FDDZGameView extends cc.Component {
 
     G_SwapSeat() {
         this.node_allFolds.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
-        // this.node_allPointCards.updateSeatIndex(RoomMgr.ins.getOldSeatIndex(), RoomMgr.ins.getSeatIndex());
     }
     
     G_BeginGame() {
