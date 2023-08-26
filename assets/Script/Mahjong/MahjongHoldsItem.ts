@@ -110,7 +110,7 @@ export default class MahjongHoldsItem extends CardEventHandle {
                 this.createCombineItem(i, data);
             } else {
                 combineItems[i].getComponent(MahjongCombineItem).updateView(data);
-                combineItems[i].active = true;
+                combineItems[i].active = true; 
             }
         }
         for (let i = combines.length; i < combineItems.length; ++i) {
@@ -144,6 +144,9 @@ export default class MahjongHoldsItem extends CardEventHandle {
             item.setSitPos(this.sitPos);
             item.updateView(data);
             this.loading[index] = false;
+            if (!this._combines[index]) {
+                node.active = false;
+            }
         });
     }
 }

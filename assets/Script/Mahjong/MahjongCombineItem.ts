@@ -46,11 +46,10 @@ export default class MahjongCombineItem extends cc.Component {
     }
 
     updateMahjongs(mahjongs) {
-        console.log("ccccccccccccccccccc", mahjongs, this._mahjongs);
         if (mahjongs.length == this._mahjongs.length && mahjongs[0] == this._mahjongs[0]) {
             return;
         }
-        console.log("ddddddddddddddddddddddddd")
+        this._mahjongs = mahjongs;
         if (this._mahjongs.length == 3 && mahjongs.length == 4) {
             this.changeCombine3ToCombine4();
         } else {
@@ -58,16 +57,13 @@ export default class MahjongCombineItem extends cc.Component {
             if (this.node_mahjong4) {
                 this.node_mahjong4.parent = null;
             }
-            console.log("eeeeeeeeeeeeeeeee")
             if (mahjongs.length == 3) {
                 this.createCombine3(mahjongs);
             } else if (mahjongs.length == 4) {
-                console.log("ffffffffffffffffff")
                 let mahjong = mahjongs[0];
                 this.createCombine4(mahjong, this.showType);
             }
         }
-        this._mahjongs = mahjongs;
     }
 
     updateView(data) {
@@ -77,7 +73,6 @@ export default class MahjongCombineItem extends cc.Component {
 
     changeCombine3ToCombine4() {
         let node = this.node_combine3.node.children[1];
-        console.log("bbbbbbbbbbbbbbbbb", node, this.mahjongs[0], this.showType);
         this.createMahjong4(node, this.mahjongs[0], this.showType);
     }
 
@@ -111,7 +106,6 @@ export default class MahjongCombineItem extends cc.Component {
             let pos = new cc.Vec2(mahjongNode.position.x, y);
             let realPos = this.node.convertToNodeSpaceAR(mahjongNode.parent.convertToWorldSpaceAR(pos))
             node.setPosition(realPos);
-            console.log("aaaaaaaaaaaaaaaa", mahjong, pos, realPos, node);
             this.node_mahjong4 = node;
         });
     }

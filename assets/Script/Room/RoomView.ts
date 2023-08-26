@@ -76,6 +76,8 @@ export default class RoomView extends cc.Component {
 
     addGamberTimerTask: TimerTask;
 
+    adminOperateView: cc.Node;
+
     protected start(): void {
         this.initNetListener();
         UIMgr.createNode(this.prefab_gameover_view, this.node);
@@ -112,7 +114,13 @@ export default class RoomView extends cc.Component {
     }
 
     G_UpdatePermission() {
-        UIMgr.createPrefab("AdminOperateView", this.node);
+        if (this.adminOperateView) {
+            this.adminOperateView.active = true;
+        } else {
+            UIMgr.createPrefab("AdminOperateView", this.node, null, (err, node) => {
+                this.adminOperateView = node;
+            });
+        }
     }
 
     G_PushRoomInfo(data) {
