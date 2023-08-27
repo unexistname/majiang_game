@@ -95,6 +95,9 @@ export default class UIMgr {
     }
 
     static createPrefab(prefabName: string, parent?: cc.Node, data?: any, callback?: Function) {
+        if (!prefabName) {
+            return;
+        }
         let path = ResUtil.getPrefabPath(prefabName);
         LogUtil.Info("want create prefab. name =", prefabName, ", path =", path);
         cc.loader.loadRes(path, cc.Prefab, (err, prefab) => {
@@ -118,6 +121,9 @@ export default class UIMgr {
     }
 
     static createNode(prefab: cc.Node | cc.Prefab, parent?: cc.Node, type?: { prototype: cc.Component }, data?: any) {
+        if (!prefab) {
+            return;
+        }
         // @ts-ignore
         let node: cc.Node = cc.instantiate(prefab);
         LogUtil.Info("want create prefab. name =", prefab.name, ", parent=", parent && parent.name);
